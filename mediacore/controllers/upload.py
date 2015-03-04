@@ -16,8 +16,8 @@ from mediacore.lib.base import BaseController
 from mediacore.lib.decorators import autocommit, expose, observable, validate
 from mediacore.lib.helpers import redirect, url_for
 from mediacore.lib.storage import add_new_media_file
-from mediacore.lib.thumbnails import create_default_thumbs_for, has_thumbs
-from mediacore.model import Author, DBSession, get_available_slug, Media
+from mediacore.lib.thumbnails import create_default_thumbs_for, has_thumbs, create_thumbs_for
+from mediacore.model import Author, DBSession, get_available_slug, Media, Category
 from mediacore.plugin import events
 
 import logging
@@ -67,6 +67,7 @@ class UploadController(BaseController):
             legal_wording = request.settings['wording_user_uploads'],
             support_email = support_email,
             upload_form = upload_form,
+            category_tree = Category.query.order_by(Category.name).populated_tree(),
             form_values = kwargs,
         )
 
@@ -151,6 +152,7 @@ class UploadController(BaseController):
             kwargs['name'], kwargs['email'],
             kwargs['title'], kwargs['description'],
             None, kwargs['file'], kwargs['url'],
+            kwargs['thumb'], kwargs['categories'],
         )
         email.send_media_notification(media_obj)
 
@@ -167,7 +169,7 @@ class UploadController(BaseController):
     def failure(self, **kwargs):
         return dict()
 
-    def save_media_obj(self, name, email, title, description, tags, uploaded_file, url):
+    def save_media_obj(self, name, email, title, description, tags, uploaded_file, url, thumb=None, categories=[]):
         # create our media object as a status-less placeholder initially
         media_obj = Media()
         media_obj.author = Author(name, email)
@@ -177,6 +179,8 @@ class UploadController(BaseController):
         if request.settings['wording_display_administrative_notes']:
             media_obj.notes = request.settings['wording_administrative_notes']
         media_obj.set_tags(tags)
+        if categories:
+            media_obj.set_categories(categories)
 
         # Give the Media object an ID.
         DBSession.add(media_obj)
@@ -186,8 +190,10 @@ class UploadController(BaseController):
         media_file = add_new_media_file(media_obj, file=uploaded_file, url=url)
 
         # The thumbs may have been created already by add_new_media_file
-        if not has_thumbs(media_obj):
+        if not has_thumbs(media_obj) and thumb is None:
             create_default_thumbs_for(media_obj)
+        elif thumb is not None:
+            create_thumbs_for(media_obj, thumb.file, thumb.filename)
 
         media_obj.update_status()
         DBSession.flush()
