@@ -71,6 +71,9 @@ media = Table('media', metadata,
     Column('encoded', Boolean, default=False, nullable=False, doc=\
         """A flag to indicate whether this file is encoded in a web-ready state."""),
 
+    Column('downloadable', Boolean, default=False, nullable=False, doc=\
+        """A flag to indicate whether this file is downloadble in the user view."""),
+
     Column('publishable', Boolean, default=False, nullable=False, doc=\
         """A flag to indicate if this media should be published in between its
         publish_on and publish_until dates. If this is false, this is

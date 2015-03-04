@@ -10,7 +10,7 @@ from pylons import request
 from tw.api import WidgetsList
 from formencode import Invalid
 from formencode.validators import FancyValidator
-from tw.forms import HiddenField, SingleSelectField
+from tw.forms import HiddenField, SingleSelectField, CheckBox
 from tw.forms.validators import Int, DateTimeConverter, FieldStorageUploadConverter, OneOf
 
 from mediacore.lib import helpers
@@ -149,6 +149,7 @@ class MediaForm(ListForm):
         TextField('title', label_text=N_('Title'), validator=TextField.validator(not_empty=True), maxlength=255),
         TextField('author_name', label_text=N_('Author Name'), maxlength=50),
         TextField('author_email', label_text=N_('Author Email'), validator=email_validator(not_empty=True), maxlength=255),
+        SingleSelectField('downloadable', label_text=N_('Users can download the media files'), options=lambda: [('yes', 'Yes'), ('no', 'No')]),
         XHTMLTextArea('description', label_text=N_('Description'), attrs=dict(rows=5, cols=25)),
         CategoryCheckBoxList('categories', label_text=N_('Categories'), options=lambda: DBSession.query(Category.id, Category.name).all()),
         TextArea('tags', label_text=N_('Tags'), attrs=dict(rows=3, cols=15), help_text=N_(u'e.g.: puppies, great dane, adorable')),

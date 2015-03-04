@@ -162,6 +162,7 @@ class MediaController(BaseController):
             user = request.perm.user
             media_values.setdefault('author_name', user.display_name)
             media_values.setdefault('author_email', user.email_address)
+            media_values.setdefault('downloadable', 'no')
         else:
             # Pull the defaults from the media item
             media_values = dict(
@@ -174,6 +175,7 @@ class MediaController(BaseController):
                 tags = ', '.join((tag.name for tag in media.tags)),
                 categories = [category.id for category in media.categories],
                 notes = media.notes,
+                downloadable = media.downloadable and 'yes' or 'no',
             )
 
         # Re-verify the state of our Media object in case the data is nonsensical
@@ -201,7 +203,7 @@ class MediaController(BaseController):
     @autocommit
     @observable(events.Admin.MediaController.save)
     def save(self, id, slug, title, author_name, author_email,
-             description, notes, podcast, tags, categories,
+             description, notes, podcast, tags, categories, downloadable,
              delete=None, **kwargs):
         """Save changes or create a new :class:`~mediacore.model.media.Media` instance.
 
@@ -228,6 +230,7 @@ class MediaController(BaseController):
         media.title = title
         media.author = Author(author_name, author_email)
         media.description = description
+        media.downloadable = downloadable == 'yes' and True or False
         media.notes = notes
         media.podcast_id = podcast
         media.set_tags(tags)

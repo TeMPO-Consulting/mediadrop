@@ -1008,6 +1008,7 @@ def media_player(media, is_widescreen=False, show_like=True, show_dislike=True,
     :returns: A rendered player.
     """
     player = preferred_player_for_media(media, **kwargs)
+    print media.downloadable, show_download
     return render('players/html5_or_flash.html', {
         'player': player,
         'media': media,
@@ -1016,7 +1017,7 @@ def media_player(media, is_widescreen=False, show_like=True, show_dislike=True,
         'js_init': js_init,
         'show_like': show_like,
         'show_dislike': show_dislike,
-        'show_download': show_download,
+        'show_download': media.downloadable and show_download or False,
         'show_embed': show_embed,
         'show_playerbar': show_playerbar,
         'show_popout': show_popout,
