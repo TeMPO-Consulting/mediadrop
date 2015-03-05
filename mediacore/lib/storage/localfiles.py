@@ -149,11 +149,9 @@ class LocalFileStorage(FileStorageEngine):
         for vs in vid_size:
             ratio = float(vs['height']) / info.video.video_height
             vw = int(info.video.video_width*ratio)
-            print vw
             if vw % 2:
                 vw += 1
             for vf in vid_formats:
-                print vs, vw
                 fname, ext = os.path.splitext(file_path)
                 to_file_name = '%s_%s_%s.%s' % (
                     fname,

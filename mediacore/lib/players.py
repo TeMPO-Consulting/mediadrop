@@ -960,7 +960,7 @@ class iTunesPlayer(FileSupportMixin, AbstractPlayer):
 ###############################################################################
 
 def preferred_player_for_media(media, **kwargs):
-    uris = media.get_uris()
+    uris = media.get_uris(quality=kwargs.get('quality'))
 
     from mediacore.model.players import fetch_enabled_players
     # Find the first player that can play any uris
@@ -980,7 +980,7 @@ def preferred_player_for_media(media, **kwargs):
 def media_player(media, is_widescreen=False, show_like=True, show_dislike=True,
                  show_download=False, show_embed=False, show_playerbar=True,
                  show_popout=True, show_resize=False, show_share=True,
-                 js_init=None, **kwargs):
+                 js_init=None, quality=None, **kwargs):
     """Instantiate and render the preferred player that can play this media.
 
     We make no effort to pick the "best" player here, we simply return
@@ -1007,12 +1007,11 @@ def media_player(media, is_widescreen=False, show_like=True, show_dislike=True,
     :rtype: `str` or `None`
     :returns: A rendered player.
     """
-    player = preferred_player_for_media(media, **kwargs)
-    print media.downloadable, show_download
+    player = preferred_player_for_media(media, quality=quality, **kwargs)
     return render('players/html5_or_flash.html', {
         'player': player,
         'media': media,
-        'uris': media.get_uris(),
+        'uris': media.get_uris(quality),
         'is_widescreen': is_widescreen,
         'js_init': js_init,
         'show_like': show_like,

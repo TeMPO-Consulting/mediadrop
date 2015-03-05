@@ -582,10 +582,24 @@ class Media(object):
     def _validate_description_plain(self, key, value):
         return strip_xhtml(value, True)
 
-    def get_uris(self):
+    def get_uris(self, quality=None):
         uris = []
-        for file in self.files:
-            uris.extend(file.get_uris())
+
+        quality_name = {
+            'sd': '720_480',
+            'md': '1280_720',
+            'hd': '1920_1080',
+        }
+
+        if quality in quality_name:
+            for file in self.files:
+                for uri in file.get_uris():
+                    if quality_name[quality] in str(uri):
+                        uris.extend(file.get_uris())
+                        break
+        else:
+            for file in self.files:
+                uris.extend(file.get_uris())
         return uris
 
 class MediaFileQuery(Query):

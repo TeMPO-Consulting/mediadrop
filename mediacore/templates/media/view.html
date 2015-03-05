@@ -37,7 +37,7 @@ See LICENSE.txt in the main project directory, for more information.
 		<div py:def="media_box(media)" id="media-box" class="feat-box media-${is_widescreen and 'wide' or 'norm'}">
 			<div class="feat-top" />
 			<div class="feat-content">
-				${h.media_player(media, show_download=True, show_embed=True, show_resize=True, is_widescreen=is_widescreen, **(is_widescreen and dict(width=890, height=500) or dict(width=560, height=315)))}
+				${h.media_player(media, show_download=True, show_embed=True, show_resize=True, is_widescreen=is_widescreen, quality=quality, **(is_widescreen and dict(width=890, height=500) or dict(width=560, height=315)))}
 			</div>
 			<div class="feat-bottom" />
 		</div>

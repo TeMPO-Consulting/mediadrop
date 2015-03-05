@@ -92,6 +92,9 @@ def make_map(config, controller_scan=controller_scan):
     map.connect('/media/{slug}/{action}',
         controller='media',
         action='view')
+    map.connect('/media/{slug}/q/{quality}',
+        controller='media',
+        action='view')
     map.connect('/files/{id}-{slug}.{container}',
         controller='media',
         action='serve',

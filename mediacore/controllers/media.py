@@ -172,6 +172,10 @@ class MediaController(BaseController):
             podcast_slug = None
         redirect(action='view', slug=media.slug, podcast_slug=podcast_slug)
 
+    def set_quality(self, quality, slug, **kwargs):
+        print quality, slug
+        redirect(action='view', slug=media.slug, quality=quality)
+
     @expose('media/view.html')
     @observable(events.MediaController.view)
     def view(self, slug, podcast_slug=None, **kwargs):
@@ -205,6 +209,7 @@ class MediaController(BaseController):
         """
         media = fetch_row(Media, slug=slug)
         request.perm.assert_permission(u'view', media.resource)
+        quality = request.GET.get('q')
 
         if media.podcast_id is not None:
             # Always view podcast media from a URL that shows the context of the podcast
@@ -229,6 +234,7 @@ class MediaController(BaseController):
             comments = media.comments.published().all(),
             comment_form_action = url_for(action='comment'),
             comment_form_values = kwargs,
+            quality = quality,
         )
 
     @expose('players/iframe.html')
