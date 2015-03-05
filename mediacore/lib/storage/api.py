@@ -322,7 +322,7 @@ def enabled_engines():
         .all()
     return list(sort_engines(engines))
 
-def add_new_media_file(media, file=None, url=None):
+def add_new_media_file(media, file=None, url=None, template=True):
     """Create a MediaFile instance from the given file or URL.
 
     This function MAY modify the given media object.
@@ -365,6 +365,7 @@ def add_new_media_file(media, file=None, url=None):
     mf.bitrate = meta.get('bitrate', None)
     mf.width = meta.get('width', None)
     mf.height = meta.get('height', None)
+    mf.template = template
 
     media.files.append(mf)
     DBSession.flush()
@@ -414,7 +415,8 @@ def add_new_media_file(media, file=None, url=None):
     # Try to transcode the file.
     for engine in sorted_engines:
         try:
-            engine.transcode(mf)
+            if template:
+                engine.transcode(mf)
             log.debug('Engine %r has agreed to transcode %r', engine, mf)
             break
         except CannotTranscode:

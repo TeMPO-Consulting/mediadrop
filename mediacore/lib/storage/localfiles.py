@@ -10,13 +10,24 @@ import os
 from shutil import copyfileobj
 from urlparse import urlunsplit
 
+from converter import Converter
+
 from pylons import config
+from cgi import FieldStorage
 
 from mediacore.forms.admin.storage.localfiles import LocalFileStorageForm
 from mediacore.lib.i18n import N_
-from mediacore.lib.storage.api import safe_file_name, FileStorageEngine
+from mediacore.lib.storage.api import safe_file_name, FileStorageEngine, add_new_media_file
 from mediacore.lib.uri import StorageURI
 from mediacore.lib.util import delete_files, url_for
+
+
+class FileStorage(object):
+
+    def __init__(self, file, filename):
+        self.file = file
+        self.filename = filename
+
 
 class LocalFileStorage(FileStorageEngine):
 
@@ -115,5 +126,68 @@ class LocalFileStorage(FileStorageEngine):
         if not basepath:
             basepath = config['media_dir']
         return os.path.join(basepath, unique_id)
+
+    def transcode(self, media_file):
+        """
+        Transcode the video into three videos with predefined
+        dimensions and predefined formats.
+        """
+        vid_formats = [
+            ('webm', 'vp8', 'vorbis'),
+            ('mp4', 'h264', 'mp3'),
+        ]
+
+        vid_size = [
+            {'width': 720, 'height': 480},
+            {'width': 1280, 'height': 720},
+            {'width': 1920, 'height': 1080},
+        ]
+        c = Converter()
+        file_path = self._get_path(media_file.unique_id)
+        info = c.probe(file_path)
+
+        for vs in vid_size:
+            ratio = float(vs['height']) / info.video.video_height
+            vw = int(info.video.video_width*ratio)
+            print vw
+            if vw % 2:
+                vw += 1
+            for vf in vid_formats:
+                print vs, vw
+                fname, ext = os.path.splitext(file_path)
+                to_file_name = '%s_%s_%s.%s' % (
+                    fname,
+                    vs['width'],
+                    vs['height'],
+                    vf[0],
+                )
+                opts = {
+                    'threads': 4,
+                    'format': vf[0],
+                    'audio': {
+                        'codec': vf[2],
+                    },
+                    'video': {
+                        'src_width': info.video.video_width,
+                        'src_height': info.video.video_height,
+                        'codec': vf[1],
+                        'width': vw,
+                        'height': vs['height'],
+                        'mode': 'stretch',
+                    },
+                }
+                conv = c.convert(
+                    file_path,
+                    to_file_name,
+                    opts,
+                    timeout=None,
+                )
+
+                for timecode in conv:
+                    pass
+                    #print "Converting (%f) ...\r" % timecode
+                info_out = c.probe(to_file_name)
+                fstore = FileStorage(os.fdopen(os.open(to_file_name, os.O_RDONLY)), to_file_name)
+                add_new_media_file(media_file.media, fstore, template=False)
 
 FileStorageEngine.register(LocalFileStorage)
