@@ -13,6 +13,7 @@ See LICENSE.txt in the main project directory, for more information.
       xmlns:xi="http://www.w3.org/2001/XInclude"
       py:strip=""
       py:with="download_uris = show_download and sorted((uri for uri in (h.download_uri(file) for file in media.files) if uri), key=lambda uri: uri.file.size);
+               qualities = {'sd': 'Basse', 'md': 'Moyenne', 'hd': 'Haute'};
                embed_code = show_embed and h.embed_iframe(media);
                show_like = settings['appearance_show_like'] and show_like;
                show_dislike = settings['appearance_show_dislike'] and show_dislike;
@@ -89,6 +90,20 @@ See LICENSE.txt in the main project directory, for more information.
 						<div class="meta-hover-top"></div>
 						<div class="meta-hover-content">
 							<label>Embeddable Player HTML: <input type="text" value="${unicode(embed_code)}" readonly="readonly" /></label>
+						</div>
+						<div class="meta-hover-bottom"></div>
+					</div>
+				</li>
+				<li py:if="quality" class="f-rgt ${not (show_popout or show_resize or show_share or show_embed) and 'mcore-nav-right' or None}">
+                <a class="mcore-nav-link" href="${qualities}" title="Quality"><span>Quality</span><em /></a>
+					<div py:if="len(qualities) > 1" class="meta-hover">
+						<div class="meta-hover-top"></div>
+						<div class="meta-hover-content">
+							<ul>
+                                <li py:for="q in sorted(qualities.keys())">
+                                <a href="/media/${media.slug}/q/${q}" target="_self" class="underline-hover">${qualities[q]}</a>
+                                </li>
+							</ul>
 						</div>
 						<div class="meta-hover-bottom"></div>
 					</div>

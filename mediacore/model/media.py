@@ -176,6 +176,7 @@ media_files = Table('media_files', metadata,
     Column('created_on', DateTime, default=datetime.now, nullable=False),
     Column('modified_on', DateTime, default=datetime.now, onupdate=datetime.now, nullable=False),
     Column('template', Boolean, default=False),
+    Column('quality', Unicode(16), nullable=False),
 
     Column('bitrate', Integer),
     Column('width', Integer),

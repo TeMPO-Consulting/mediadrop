@@ -138,9 +138,9 @@ class LocalFileStorage(FileStorageEngine):
         ]
 
         vid_size = [
-            {'width': 720, 'height': 480},
-            {'width': 1280, 'height': 720},
-            {'width': 1920, 'height': 1080},
+            {'width': 720, 'height': 480, 'name': 'sd',},
+            {'width': 1280, 'height': 720, 'name': 'md',},
+            {'width': 1920, 'height': 1080, 'name': 'hd',},
         ]
         c = Converter()
         file_path = self._get_path(media_file.unique_id)
@@ -186,6 +186,6 @@ class LocalFileStorage(FileStorageEngine):
                     #print "Converting (%f) ...\r" % timecode
                 info_out = c.probe(to_file_name)
                 fstore = FileStorage(os.fdopen(os.open(to_file_name, os.O_RDONLY)), to_file_name)
-                add_new_media_file(media_file.media, fstore, template=False)
+                add_new_media_file(media_file.media, fstore, template=False, quality=name)
 
 FileStorageEngine.register(LocalFileStorage)

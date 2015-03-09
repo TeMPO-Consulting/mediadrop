@@ -94,7 +94,7 @@ def make_map(config, controller_scan=controller_scan):
         action='view')
     map.connect('/media/{slug}/q/{quality}',
         controller='media',
-        action='view')
+        action='set_quality')
     map.connect('/files/{id}-{slug}.{container}',
         controller='media',
         action='serve',
@@ -191,7 +191,9 @@ def make_map(config, controller_scan=controller_scan):
     map.connect('/admin/media/merge_stubs',
         controller='admin/media',
         action='merge_stubs')
-
+    map.connect('/admin/media/merge_stubs',
+        controller='admin/media',
+        action='merge_stubs')
 
     simple_admin_paths = '|'.join([
         'admin/index',

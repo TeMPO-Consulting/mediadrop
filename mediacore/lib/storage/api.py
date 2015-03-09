@@ -322,7 +322,7 @@ def enabled_engines():
         .all()
     return list(sort_engines(engines))
 
-def add_new_media_file(media, file=None, url=None, template=True):
+def add_new_media_file(media, file=None, url=None, template=True, quality=None):
     """Create a MediaFile instance from the given file or URL.
 
     This function MAY modify the given media object.
@@ -366,6 +366,7 @@ def add_new_media_file(media, file=None, url=None, template=True):
     mf.width = meta.get('width', None)
     mf.height = meta.get('height', None)
     mf.template = template
+    mf.quality = quality is not None and quality or 'original'
 
     media.files.append(mf)
     DBSession.flush()
