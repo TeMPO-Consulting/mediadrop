@@ -60,12 +60,12 @@ See LICENSE.txt in the main project directory, for more information.
 			<py:when test="not media.encoded">
 				<ol class="status-list">
 					<li class="status-list-complete">Review Complete</li>
-					<li class="status-list-inprogress">Encoding Pending</li>
+                    <li class="status-list-inprogress">${media.start_encoding and not media.end_encoding and _('Encodage en cours') or _('Encoding Pending')}</li>
 					<li class="status-list-pending" id="status-publish" title="Click to change the publish date">
 						Publishing <span class="publish-date" py:content="publish_on or _('Pending')" />
 					</li>
 				</ol>
-				<div class="center" style="margin-top:10px">Encoding will be complete when an acceptable file is added.</div>
+				<div class="center" style="margin-top:10px">Encoding will be complete when an acceptable file is added and the encoder has done the encoding in different qualities.</div>
 			</py:when>
 			<py:when test="not media.publishable">
 				<ol class="status-list">

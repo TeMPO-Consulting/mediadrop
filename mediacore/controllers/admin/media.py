@@ -9,6 +9,7 @@ Media Admin Controller
 """
 
 import os
+import time
 from datetime import datetime
 
 from formencode import Invalid, validators
@@ -25,6 +26,8 @@ from mediacore.lib.decorators import (autocommit, expose, expose_xhr,
 from mediacore.lib.helpers import redirect, url_for
 from mediacore.lib.i18n import _
 from mediacore.lib.storage import add_new_media_file
+from mediacore.lib.storage.api import enabled_engines, UnsuitableEngineError, StorageError
+from mediacore.lib.storage.localfiles import LocalFileStorage
 from mediacore.lib.templating import render
 from mediacore.lib.thumbnails import thumb_path, thumb_paths, create_thumbs_for, create_default_thumbs_for, has_thumbs, has_default_thumbs, delete_thumbs
 from mediacore.model import Author, Category, Media, Podcast, Tag, fetch_row, get_available_slug
@@ -109,6 +112,23 @@ class MediaController(BaseController):
             tag = tag,
             podcast = podcast,
         )
+
+    @expose()
+    def transcode(self, **kwargs):
+        media = Media.query.options(orm.undefer('comment_count_published'))
+        media = media.reviewed().encoded(False)
+        for m in media:
+            m.start_encoding = time.strftime('%Y-%m-%d %H:%M:%S')
+            if len(m.files):
+                for f in m.files:
+                    if f.template:
+                        lfs = LocalFileStorage()
+                        DBSession.commit()
+                        lfs.transcode(f)
+                        DBSession.commit()
+                        m.update_status()
+            m.end_encoding = time.strftime('%Y-%m-%d %H:%M:%S')
+            DBSession.commit()
 
     def json_error(self, *args, **kwargs):
         validation_exception = tmpl_context._current_obj().validation_exception

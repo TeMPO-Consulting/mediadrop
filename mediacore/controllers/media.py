@@ -242,10 +242,12 @@ class MediaController(BaseController):
     def embed_player(self, slug, w=None, h=None, **kwargs):
         media = fetch_row(Media, slug=slug)
         request.perm.assert_permission(u'view', media.resource)
+        quality = kwargs.get('quality', 'sd')
         return dict(
             media = media,
             width = w and int(w) or None,
             height = h and int(h) or None,
+            quality = quality,
         )
 
     @expose(request_method="POST")

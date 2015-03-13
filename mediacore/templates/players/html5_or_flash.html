@@ -101,7 +101,12 @@ See LICENSE.txt in the main project directory, for more information.
 						<div class="meta-hover-content">
 							<ul>
                                 <li py:for="q in sorted(qualities.keys())">
-                                <a href="/media/${media.slug}/q/${q}" target="_self" class="underline-hover">${qualities[q]}</a>
+                                <b py:if="q==quality">
+                                    <a href="/media/${media.slug}/q/${q}" target="_self" class="underline-hover">${qualities[q]}</a>
+                                </b>
+                                <span py:if="q!=quality">
+                                    <a href="/media/${media.slug}/q/${q}" target="_self" class="underline-hover">${qualities[q]}</a>
+                                </span>
                                 </li>
 							</ul>
 						</div>

@@ -416,8 +416,8 @@ def add_new_media_file(media, file=None, url=None, template=True, quality=None):
     # Try to transcode the file.
     for engine in sorted_engines:
         try:
-            if template:
-                engine.transcode(mf)
+#            if template:
+#                engine.transcode(mf)
             log.debug('Engine %r has agreed to transcode %r', engine, mf)
             break
         except CannotTranscode:

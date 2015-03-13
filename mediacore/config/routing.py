@@ -194,11 +194,15 @@ def make_map(config, controller_scan=controller_scan):
     map.connect('/admin/media/merge_stubs',
         controller='admin/media',
         action='merge_stubs')
+    map.connect('/admin/media/transcode',
+        controller='admin/media',
+        action='transcode')
 
     simple_admin_paths = '|'.join([
         'admin/index',
         'admin/comments',
         'admin/media',
+        'admin/media-file',
         'admin/podcasts',
         'admin/settings',
     ])

@@ -62,6 +62,9 @@ class LocalFileStorage(FileStorageEngine):
         file_name = safe_file_name(media_file, file.filename)
         file_path = self._get_path(file_name)
 
+        if not media_file.template:
+            return file_name
+
         temp_file = file.file
         temp_file.seek(0)
         permanent_file = open(file_path, 'wb')
@@ -133,7 +136,7 @@ class LocalFileStorage(FileStorageEngine):
         dimensions and predefined formats.
         """
         vid_formats = [
-            ('webm', 'vp8', 'vorbis'),
+#            ('webm', 'vp8', 'vorbis'),
             ('mp4', 'h264', 'mp3'),
         ]
 
@@ -186,6 +189,6 @@ class LocalFileStorage(FileStorageEngine):
                     #print "Converting (%f) ...\r" % timecode
                 info_out = c.probe(to_file_name)
                 fstore = FileStorage(os.fdopen(os.open(to_file_name, os.O_RDONLY)), to_file_name)
-                add_new_media_file(media_file.media, fstore, template=False, quality=name)
+                add_new_media_file(media_file.media, fstore, template=False, quality=vs.get('name'))
 
 FileStorageEngine.register(LocalFileStorage)

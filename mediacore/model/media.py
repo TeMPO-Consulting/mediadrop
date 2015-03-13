@@ -93,6 +93,12 @@ media = Table('media', metadata,
         """A datetime range during which this object should be published.
         The range may be open ended by leaving ``publish_until`` empty."""),
 
+    Column('start_encoding', DateTime, doc=\
+        """A datetime of start encoding of media files"""),
+
+    Column('end_encoding', DateTime, doc=\
+        """A datetime of end encoding of media files"""),
+
     Column('title', Unicode(255), nullable=False, doc=\
         """Display title."""),
 
@@ -600,7 +606,8 @@ class Media(object):
                         break
         else:
             for file in self.files:
-                uris.extend(file.get_uris())
+                if not file.template:
+                    uris.extend(file.get_uris())
         return uris
 
 class MediaFileQuery(Query):

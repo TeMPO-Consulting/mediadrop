@@ -1043,6 +1043,9 @@ def pick_any_media_file(media):
     :param media: A :class:`~mediacore.model.media.Media` instance.
     :returns: A :class:`~mediacore.model.media.MediaFile` object or None
     """
+    if len(media.files) and all(f.template for f in media.files):
+        return None
+
     uris = media.get_uris()
     from mediacore.model.players import fetch_enabled_players
     for player_cls, player_data in fetch_enabled_players():
