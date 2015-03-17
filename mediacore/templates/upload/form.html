@@ -47,11 +47,11 @@ See LICENSE.txt in the main project directory, for more information.
 					<td class="${render_error and (error_for(field) is not None and 'err' or 'noerr') or ''}">
 						${field.display(value_for(field), **args_for(field))}
 
-						<!-- The following 4 elements are used only by the SwiffUploadManager javascript -->
+						<!-- The following 4 elements are used only by the SwiffUploadManager javascript
 						<div py:if="field.name == 'file'" id="bottombar">
 							<button id="browse-button" class="mcore-btn f-lft"><span>Choose a file to upload</span></button>
 							<div id="file-info" class="f-lft" />
-						</div>
+                            </div>!-->
 					</td>
 				</tr>
 				<tr py:if="field.name == 'description'" class="${field.name}-rel">

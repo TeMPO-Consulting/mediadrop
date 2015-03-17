@@ -20,6 +20,7 @@ from mediacore.lib.i18n import N_
 from mediacore.lib.storage.api import safe_file_name, FileStorageEngine, add_new_media_file
 from mediacore.lib.uri import StorageURI
 from mediacore.lib.util import delete_files, url_for
+from mediacore.model.meta import DBSession
 
 
 class FileStorage(object):
@@ -42,6 +43,12 @@ class LocalFileStorage(FileStorageEngine):
     _default_data = {
         'path': None,
         'rtmp_server_uri': None,
+        'webm': 'no',
+        '240': 'yes',
+        '360': 'yes',
+        '480': 'yes',
+        '720': 'yes',
+        '1080': 'yes',
     }
 
     def store(self, media_file, file=None, url=None, meta=None):
@@ -63,7 +70,7 @@ class LocalFileStorage(FileStorageEngine):
         file_path = self._get_path(file_name)
 
         if not media_file.template:
-            return file_name
+            return file.filename.split('/')[-1]
 
         temp_file = file.file
         temp_file.seek(0)
@@ -136,20 +143,46 @@ class LocalFileStorage(FileStorageEngine):
         dimensions and predefined formats.
         """
         vid_formats = [
-#            ('webm', 'vp8', 'vorbis'),
             ('mp4', 'h264', 'mp3'),
         ]
 
-        vid_size = [
-            {'width': 720, 'height': 480, 'name': 'sd',},
-            {'width': 1280, 'height': 720, 'name': 'md',},
-            {'width': 1920, 'height': 1080, 'name': 'hd',},
-        ]
+        if self._data.get('webm') == 'yes':
+            vid_formats.append(('webm', 'vp8', 'vorbis'))
+
+        vid_size = []
+
+        if self._data.get('240') == 'yes':
+            vid_size.append(
+                {'width': 426, 'height': 240, 'name': '240',}
+            )
+        if self._data.get('360') == 'yes':
+            vid_size.append(
+                {'width': 640, 'height': 360, 'name': '360',},
+            )
+        if self._data.get('480') == 'yes':
+            vid_size.append(
+                {'width': 854, 'height': 480, 'name': '480',},
+            )
+        if self._data.get('720') == 'yes':
+            vid_size.append(
+                {'width': 1280, 'height': 720, 'name': '720',},
+            )
+        if self._data.get('1080') == 'yes':
+            vid_size.append(
+                {'width': 1920, 'height': 1080, 'name': '1080',},
+            )
+
         c = Converter()
         file_path = self._get_path(media_file.unique_id)
         info = c.probe(file_path)
 
+        nb_files_to_transcode = len(vid_formats) * len(vid_size)
+        nb_transcoded_files = 0
+
         for vs in vid_size:
+            if vs['name'] != 'sd' and vs['height'] > info.video.video_height and vs['width'] > info.video.video_width:
+                nb_tanscoded_files += 1
+                continue
             ratio = float(vs['height']) / info.video.video_height
             vw = int(info.video.video_width*ratio)
             if vw % 2:
@@ -184,9 +217,12 @@ class LocalFileStorage(FileStorageEngine):
                     timeout=None,
                 )
 
+                complete_percentage = (nb_transcoded_files / float(nb_files_to_transcode))
                 for timecode in conv:
-                    pass
-                    #print "Converting (%f) ...\r" % timecode
+                    media_file.media.encoding_percentage = int(((timecode / 100.00 / nb_files_to_transcode) + complete_percentage) * 100)
+                    DBSession.commit()
+                nb_transcoded_files += 1
+
                 info_out = c.probe(to_file_name)
                 fstore = FileStorage(os.fdopen(os.open(to_file_name, os.O_RDONLY)), to_file_name)
                 add_new_media_file(media_file.media, fstore, template=False, quality=vs.get('name'))

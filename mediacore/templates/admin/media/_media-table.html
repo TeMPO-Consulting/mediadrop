@@ -46,7 +46,7 @@ See LICENSE.txt in the main project directory, for more information.
 					<td py:when="'status'" headers="h-status" py:choose="">
 						<div py:when="not media.reviewed" class="status-unreviewed">Unreviewed</div>
 						<div py:when="not media.encoded and not media.start_encoding" class="status-unencoded">Unencoded</div>
-						<div py:when="not media.encoded and media.start_encoding" class="status-unencoded">Encodage en cours</div>
+                        <div py:when="not media.encoded and media.start_encoding" class="status-unencoded">Encodage en cours (${media.encoding_percentage or 0} %)</div>
 						<div py:when="not media.publishable" class="status-draft">Draft</div>
 						<div py:when="media.is_published" class="status-published">Published</div>
 						<div py:otherwise="" class="status-publishing">Publishing...</div>

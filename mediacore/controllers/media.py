@@ -209,7 +209,7 @@ class MediaController(BaseController):
         """
         media = fetch_row(Media, slug=slug)
         request.perm.assert_permission(u'view', media.resource)
-        quality = kwargs.get('quality', 'sd')
+        quality = kwargs.get('quality', media.get_min_quality())
 
         if media.podcast_id is not None:
             # Always view podcast media from a URL that shows the context of the podcast
@@ -242,7 +242,7 @@ class MediaController(BaseController):
     def embed_player(self, slug, w=None, h=None, **kwargs):
         media = fetch_row(Media, slug=slug)
         request.perm.assert_permission(u'view', media.resource)
-        quality = kwargs.get('quality', 'sd')
+        quality = kwargs.get('quality', media.get_min_quality())
         return dict(
             media = media,
             width = w and int(w) or None,

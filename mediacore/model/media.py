@@ -99,6 +99,9 @@ media = Table('media', metadata,
     Column('end_encoding', DateTime, doc=\
         """A datetime of end encoding of media files"""),
 
+    Column('encoding_percentage', Integer, default=0, doc=\
+        """Percentage of encoding."""),
+
     Column('title', Unicode(255), nullable=False, doc=\
         """Display title."""),
 
@@ -592,23 +595,33 @@ class Media(object):
     def get_uris(self, quality=None):
         uris = []
 
-        quality_name = {
-            'sd': '720_480',
-            'md': '1280_720',
-            'hd': '1920_1080',
-        }
+        for file in self.files:
+            if file.quality == quality:
+                uris.extend(file.get_uris())
+                break
 
-        if quality in quality_name:
-            for file in self.files:
-                for uri in file.get_uris():
-                    if quality_name[quality] in str(uri):
-                        uris.extend(file.get_uris())
-                        break
-        else:
+        if not uris:
             for file in self.files:
                 if not file.template:
                     uris.extend(file.get_uris())
         return uris
+
+    def get_qualities(self):
+        q = set()
+
+        for f in self.files:
+            q.add(f.quality)
+
+        return list(q)
+
+    def get_min_quality(self):
+        q_order = ('240', '360', '480', '720', '1080')
+        f_qualities = self.get_qualities()
+        for q in q_order:
+            if q in f_qualities:
+                return q
+
+        return 'original'
 
 class MediaFileQuery(Query):
     pass

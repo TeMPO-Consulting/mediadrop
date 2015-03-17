@@ -149,7 +149,7 @@ class MediaForm(ListForm):
         TextField('title', label_text=N_('Title'), validator=TextField.validator(not_empty=True), maxlength=255),
         TextField('author_name', label_text=N_('Author Name'), maxlength=50),
         TextField('author_email', label_text=N_('Author Email'), validator=email_validator(not_empty=True), maxlength=255),
-        SingleSelectField('downloadable', label_text=N_('Users can download the media files'), options=lambda: [('yes', 'Yes'), ('no', 'No')]),
+        SingleSelectField('downloadable', label_text=N_('Fichiers disponibles au telechargement'), options=lambda: [('yes', 'Oui'), ('no', 'Non')]),
         XHTMLTextArea('description', label_text=N_('Description'), attrs=dict(rows=5, cols=25)),
         CategoryCheckBoxList('categories', label_text=N_('Categories'), options=lambda: DBSession.query(Category.id, Category.name).all()),
         TextArea('tags', label_text=N_('Tags'), attrs=dict(rows=3, cols=15), help_text=N_(u'e.g.: puppies, great dane, adorable')),

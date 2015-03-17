@@ -5,6 +5,7 @@
 # (at your option) any later version.
 # See LICENSE.txt in the main project directory, for more information.
 
+from tw.forms import SingleSelectField, CheckBox
 from mediacore.forms import ListFieldSet, TextField
 from mediacore.forms.admin.storage import StorageForm
 from mediacore.lib.i18n import N_
@@ -27,7 +28,19 @@ class LocalFileStorageForm(StorageForm):
                     help_text=N_('Files must be accessible under the same name as they are stored with locally.'),
                 ),
             ],
-        )
+        ),
+        ListFieldSet('qualities',
+            suppress_label=True,
+            legend=N_('Options d\'encodage :'),
+            children=[
+                SingleSelectField('webm', label_text=N_('Encoder en Webm'), options=lambda: [('yes', 'Oui'), ('non', 'Non')]),
+                SingleSelectField('240', label_text=N_('Encoder en 240p (Ultra-basse)'), options=lambda: [('yes', 'Oui'), ('non', 'Non')]),
+                SingleSelectField('360', label_text=N_('Encoder en 360p (Basse)'), options=lambda: [('yes', 'Oui'), ('non', 'Non')]),
+                SingleSelectField('480', label_text=N_('Encoder en 480p (Moyenne)'), options=lambda: [('yes', 'Oui'), ('non', 'Non')]),
+                SingleSelectField('720', label_text=N_('Encoder en 720p (Haute)'), options=lambda: [('yes', 'Oui'), ('non', 'Non')]),
+                SingleSelectField('1080', label_text=N_('Encoder en 1080p (Ultra-haute)'), options=lambda: [('yes', 'Oui'), ('non', 'Non')]),
+            ],
+        ),
     ] + StorageForm.buttons
 
 
@@ -47,6 +60,14 @@ class LocalFileStorageForm(StorageForm):
         specifics = value.setdefault('specifics', {})
         specifics.setdefault('path', engine._data.get('path', None))
         specifics.setdefault('rtmp_server_uri', engine._data.get('rtmp_server_uri', None))
+
+        qualities = value.setdefault('qualities', {})
+        qualities.setdefault('webm', engine._data.get('webm', None))
+        qualities.setdefault('240', engine._data.get('240', None))
+        qualities.setdefault('360', engine._data.get('360', None))
+        qualities.setdefault('480', engine._data.get('480', None))
+        qualities.setdefault('720', engine._data.get('720', None))
+        qualities.setdefault('1080', engine._data.get('1080', None))
         return StorageForm.display(self, value, engine, **kwargs)
 
     def save_engine_params(self, engine, **kwargs):
@@ -68,3 +89,11 @@ class LocalFileStorageForm(StorageForm):
         specifics = kwargs['specifics']
         engine._data['path'] = specifics['path'] or None
         engine._data['rtmp_server_uri'] = specifics['rtmp_server_uri'] or None
+
+        qualities = kwargs['qualities']
+        engine._data['webm'] = qualities['webm'] or None
+        engine._data['240'] = qualities['240'] or None
+        engine._data['360'] = qualities['360'] or None
+        engine._data['480'] = qualities['480'] or None
+        engine._data['720'] = qualities['720'] or None
+        engine._data['1080'] = qualities['1080'] or None
