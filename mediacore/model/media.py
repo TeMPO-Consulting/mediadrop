@@ -598,7 +598,6 @@ class Media(object):
         for file in self.files:
             if file.quality == quality:
                 uris.extend(file.get_uris())
-                break
 
         if not uris:
             for file in self.files:
