@@ -181,7 +181,7 @@ class LocalFileStorage(FileStorageEngine):
 
         for vs in vid_size:
             if vs['name'] != 'sd' and vs['height'] > info.video.video_height and vs['width'] > info.video.video_width:
-                nb_tanscoded_files += 1
+                nb_transcoded_files += 1
                 continue
             ratio = float(vs['height']) / info.video.video_height
             vw = int(info.video.video_width*ratio)
