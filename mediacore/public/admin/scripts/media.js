@@ -246,6 +246,10 @@ var StatusForm = new Class({
 				failure: this._displayError.bind(this, [this.options.connectionErrorText])
 			});
 		}
+        if (this.form['status'].value == 'encoding') {
+            document.getElementById('status-list-inprogress').innerHTML = 'Encodage en cours';
+            document.getElementById('encoding-message').style.visibility = 'hidden';
+        };
 		var data = this.form.toQueryString();
 		this.submitReq.send(data);
 	},

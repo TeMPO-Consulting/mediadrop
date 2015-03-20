@@ -114,9 +114,12 @@ class MediaController(BaseController):
         )
 
     @expose()
-    def transcode(self, **kwargs):
-        media = Media.query.options(orm.undefer('comment_count_published'))
-        media = media.reviewed().encoded(False)
+    def transcode(self, id=False, **kwargs):
+        if not id:
+            media = Media.query.options(orm.undefer('comment_count_published'))
+            media = media.reviewed().encoded(False)
+        else:
+            media = [fetch_row(Media, id)]
         for m in media:
             m.start_encoding = time.strftime('%Y-%m-%d %H:%M:%S')
             if len(m.files):
@@ -643,6 +646,9 @@ class MediaController(BaseController):
             media.update_popularity()
         elif publish_until:
             media.publish_until = publish_until
+        elif media.reviewed and not media.start_encoding:
+            self.transcode(media.id)
+
 
         # Verify the change is valid by re-determining the status
         media.update_status()
