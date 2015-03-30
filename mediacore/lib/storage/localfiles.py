@@ -196,7 +196,7 @@ class LocalFileStorage(FileStorageEngine):
                     vf[0],
                 )
                 opts = {
-                    'threads': 4,
+                    'threads': 1,
                     'format': vf[0],
                     'audio': {
                         'codec': vf[2],

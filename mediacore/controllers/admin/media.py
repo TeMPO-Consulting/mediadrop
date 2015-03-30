@@ -26,7 +26,7 @@ from mediacore.lib.decorators import (autocommit, expose, expose_xhr,
 from mediacore.lib.helpers import redirect, url_for
 from mediacore.lib.i18n import _
 from mediacore.lib.storage import add_new_media_file
-from mediacore.lib.storage.api import enabled_engines, UnsuitableEngineError, StorageError
+from mediacore.lib.storage.api import enabled_engines, UnsuitableEngineError, StorageError, StorageEngine
 from mediacore.lib.storage.localfiles import LocalFileStorage
 from mediacore.lib.templating import render
 from mediacore.lib.thumbnails import thumb_path, thumb_paths, create_thumbs_for, create_default_thumbs_for, has_thumbs, has_default_thumbs, delete_thumbs
@@ -120,14 +120,14 @@ class MediaController(BaseController):
             media = media.reviewed().encoded(False)
         else:
             media = [fetch_row(Media, id)]
+
         for m in media:
             m.start_encoding = time.strftime('%Y-%m-%d %H:%M:%S')
             if len(m.files):
                 for f in m.files:
                     if f.template:
-                        lfs = LocalFileStorage()
                         DBSession.commit()
-                        lfs.transcode(f)
+                        f.storage.transcode(f)
                         DBSession.commit()
                         m.update_status()
             m.end_encoding = time.strftime('%Y-%m-%d %H:%M:%S')
