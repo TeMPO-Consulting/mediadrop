@@ -838,6 +838,7 @@ a:focus .grid-title {
 }
 .meta-hover-content {
 	background: url('../images/layout/meta-hover-bg.png') repeat-y;
+    height: 20px;
 	padding: 0 15px;
 }
 
