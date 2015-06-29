@@ -100,15 +100,13 @@ See LICENSE.txt in the main project directory, for more information.
 					<div py:if="len(qualities) > 1" class="meta-hover">
 						<div class="meta-hover-top"></div>
 						<div class="meta-hover-content">
-							<ul>
-                                <span py:for="q in sorted(qualities.keys())">
+                                <ul py:for="q in sorted(qualities.keys())">
                                     <li py:if="q in available_qualities">
                                         <a href="/media/${media.slug}/q/${q}" target="_self" class="underline-hover">
                                             <b py:if="q == quality">${qualities[q]}</b>
                                             <span py:if="q != quality">${qualities[q]}</span>
                                         </a>
                                     </li>
-                                </span>
 							</ul>
 						</div>
 						<div class="meta-hover-bottom"></div>
