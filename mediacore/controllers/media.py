@@ -176,6 +176,17 @@ class MediaController(BaseController):
     def set_quality(self, slug, quality, **kwargs):
         redirect(action='view', slug=slug, quality=quality)
 
+    @expose()
+    def increment_views(self, slug, **kwargs):
+        media = fetch_row(Media, slug=slug)
+        try:
+            media.increment_views()
+            DBSession.commit()
+        except:
+            DBSession.rollback()
+
+        return u'%s vues' % media.views
+
     @expose('media/view.html')
     @observable(events.MediaController.view)
     def view(self, slug, podcast_slug=None, **kwargs):
@@ -215,12 +226,6 @@ class MediaController(BaseController):
             # Always view podcast media from a URL that shows the context of the podcast
             if url_for() != url_for(podcast_slug=media.podcast.slug):
                 redirect(podcast_slug=media.podcast.slug)
-
-        try:
-            media.increment_views()
-            DBSession.commit()
-        except OperationalError:
-            DBSession.rollback()
 
         if request.settings['comments_engine'] == 'facebook':
             response.facebook = Facebook(request.settings['facebook_appid'])
