@@ -121,6 +121,7 @@ mcore.comments.CommentForm.prototype.handleSubmitComplete = function(e) {
       var fragment = this.dom_.htmlToDocumentFragment(commentHtml);
       var liElement = this.dom_.getFirstElementChild(fragment);
       this.injectComment(liElement);
+      this.displayLikesButtons();
     } else {
       this.injectMessage(xhr.getResponseJson()['message']);
     }
@@ -131,6 +132,24 @@ mcore.comments.CommentForm.prototype.handleSubmitComplete = function(e) {
   this.setFormEnabled(true);
 };
 
+
+mcore.comments.CommentForm.prototype.displayLikesButtons = function() {
+  var bar = this.dom_.getElementsByClass('mcore-playerbar')[0];
+  var likeLi_ = this.dom_.getElementsByClass('mcore-like-li', bar)[0];
+  var dislikeLi_ = this.dom_.getElementsByClass('mcore-dislike-li', bar)[0];
+  var replikeLi_ = this.dom_.getElementsByClass('mcore-nav-rep', bar)[0];
+
+  // Remove the like and dislikes buttons
+  likeLi_.style.visibility = 'visible';
+  dislikeLi_.style.visibility = 'visible';
+  replikeLi_.style.visibility = 'hidden';
+  /*var rep_li = this.dom_.createDom('li', 'mcore-nav-left mcore-nav-rep');
+  var rep_span = this.dom_.createDom('span', 'mcore-nav-link');
+  var rep_span_link = this.dom_.createDom('span');
+  this.dom_.insertSiblingBefore(rep_li, this.likeLi_);
+  this.dom_.insertChildAt(rep_li, rep_span, 0);
+  this.dom_.insertChildAt(rep_span, rep_span_link, 0);*/
+};
 
 /**
  * Change the child LabelInput's to use the values from the given object.
