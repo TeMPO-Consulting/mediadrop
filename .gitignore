@@ -17,3 +17,4 @@ closure-library
 mediacore/public/scripts/goog
 wiki
 build
+.idea/*
