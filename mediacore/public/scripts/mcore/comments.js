@@ -38,6 +38,36 @@ goog.require('mcore.net.FormXhrIo');
  */
 mcore.comments.CommentForm = function(opt_domHelper) {
   goog.base(this, opt_domHelper);
+  /**
+   * Flag to indicate whether the comment form is shown.
+   * @type {!boolean}
+   */
+  this.isFormShown = false;
+
+  /**
+   * A separate element which contains the form.
+   * @type {Element}
+   */
+  this.form = null;
+
+  /**
+   * The ID of the initial comment
+   * @type {str}
+   */
+  this.comment_id = null;
+
+  /**
+   * A rendered element which triggers a show/hide.
+   * @type {Element}
+   */
+  this.toggleButton = null;
+
+  /**
+   * A lazy-loaded animation for sliding the full text height into view.
+   * @type {goog.fx.dom.ResizeHeight}
+   * @private
+   */
+  this.anim_ = null;
 };
 goog.inherits(mcore.comments.CommentForm, goog.ui.Component);
 
@@ -69,6 +99,13 @@ mcore.comments.CommentForm.prototype.decorateInternal = function(formElement) {
       this.dom_.removeNode(labelDiv);
     }
   }, this);
+
+  // Form hide/display
+  this.comment_id = formElement.id.split("/")[1];
+  if (this.comment_id != null) {
+    this.toggleButton = this.dom_.getElementsByClass('comment-response-' + this.comment_id)[0];
+    this.form = formElement;
+  };
 };
 
 
@@ -80,8 +117,51 @@ mcore.comments.CommentForm.prototype.enterDocument = function() {
   this.getHandler().listen(this.getElement(),
       goog.events.EventType.SUBMIT,
       this.handleSubmit);
+  if (this.comment_id != null) {
+    this.getHandler().listen(this.toggleButton, goog.events.EventType.CLICK,
+        this.onToggleClick_);
+  }
 };
 
+/**
+ * Remove the toggle click event.
+ */
+mcore.comments.CommentForm.prototype.exitDocument = function() {
+  goog.base(this, 'exitDocument');
+  if (this.comment_id != null) {
+    this.getHandler().unlisten(this.toggleButton, goog.events.EventType.CLICK,
+        this.onToggleClick_);
+  }
+};
+
+/**
+ * Instantly show the comment form.
+ * @param {boolean} show True to show the form.
+ */
+mcore.comments.CommentForm.prototype.showForm = function(show) {
+  this.form.style.display = show ? 'block' : 'none';
+  this.toggleButton.innerHTML = show ? '&laquo; Répondre' : 'Répondre &raquo;';
+  //this.injectToggle(show ? this : null);
+  //this.toggleButton.innerHTML = show ? '&raquo;' : '&laquo;';
+  this.isFormShown = show;
+};
+
+/**
+ * Animate the toggle when the button is clicked.
+ *
+ * This function is a simple proxy that is removed by the compiler.
+ *
+ * @param {goog.events.Event} e event.
+ * @private
+ */
+mcore.comments.CommentForm.prototype.onToggleClick_ = function(e) {
+  if (this.isFormShown === true) {
+    this.showForm(false);
+  }
+  else {
+    this.showForm(true);
+  }
+};
 
 /**
  * Submit the form with XHR.

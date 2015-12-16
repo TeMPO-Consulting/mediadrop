@@ -19,6 +19,62 @@ See LICENSE.txt in the main project directory, for more information.
 		</head>
 	</py:match>
 
+	<py:def function="add_comment(action=None, values=None, comment_id='')">
+	    <py:if test="action">
+		    <form id="post-comment-form/${comment_id}" action="${action}" method="post" class="post-comment-form required form" style="display: ${comment_id and 'none' or 'block'}">
+				<br />
+				<h3>Write a comment</h3>
+				<ul class="field-list" py:with="
+					values = values or {};
+					errors = tmpl_context.form_errors or {};
+				">
+					<li id="comment-id-container" class="odd" py:with="error = errors.get('comment-id', None)" hidden="True">
+						<div py:if="error" class="form-error">${error}</div>
+						<div id="name-label" class="form-label">
+							<label for="comment-id">Comment</label>
+						</div>
+						<div class="form-field">
+							<input type="text" name="comment-id" class="textfield readonly" id="comment-id" value="${comment_id}" />
+						</div>
+					</li>
+					<li id="name-container" class="even" py:with="error = errors.get('name', None)">
+						<div py:if="error" class="form-error">${error}</div>
+						<div id="name-label" class="form-label">
+							<label for="name">Name</label>
+						</div>
+						<div class="form-field">
+							<input type="text" name="name" class="textfield required" id="name" value="${values.get('name', None)}" />
+						</div>
+					</li>
+					<li id="email-container" class="odd" py:with="error = errors.get('email', None)">
+						<div py:if="error" class="form-error">${error}</div>
+						<div id="email-label" class="form-label">
+							<label for="email">Email Address (will never be published)</label>
+						</div>
+						<div class="form-field">
+							<input type="text" name="email" class="textfield" id="email" value="${values.get('email', None)}" maxlength="255" />
+						</div>
+					</li>
+					<li id="body-container" class="even" py:with="error = errors.get('body', None)">
+						<div py:if="error" class="form-error">${error}</div>
+						<div id="body-label" class="form-label">
+							<!--! XXX: This may not be a safe assumption for all languages... but for some reason 'Comment' alone doesn't translate here. -->
+							<label for="body">${ungettext('Comment', 'Comments', 1)}</label>
+						</div>
+						<div class="form-field">
+							<textarea id="body" name="body" class="required textarea" rows="5" cols="25">${values.get('body', None)}</textarea>
+						</div>
+					</li>
+					<li id="submit-container" class="odd submit">
+						<div class="form-field">
+							<button type="submit" class="mcore-btn btn-post-comment f-rgt"><span>Submit Comment</span></button>
+						</div>
+					</li>
+				</ul>
+		    </form>
+	    </py:if>
+    </py:def>
+
 	<py:def function="comment_li(comment)">
 		<li class="comment">
 			<div class="comment-top-divot"></div>
@@ -32,8 +88,10 @@ See LICENSE.txt in the main project directory, for more information.
 					</a>
 				</cite>
 				<blockquote py:content="Markup(comment.body)" />
+				<span class="comment-response comment-response-${comment.id}">Répondre &raquo;</span>
 			</div>
 			<div class="comment-bottom" />
+			${add_comment(action, values, comment.id, False)}
 		</li>
 	</py:def>
 
@@ -53,51 +111,8 @@ See LICENSE.txt in the main project directory, for more information.
 				<div class="comment-content" />
 				<div class="comment-bottom" />
 			</div>
-			<py:if test="action">
-				<form id="post-comment-form" action="${action}" method="post" class="required form">
-				<br />
-				<h3>Write a comment</h3>
-					<ul class="field-list" py:with="
-						values = values or {};
-						errors = tmpl_context.form_errors or {};
-					">
-						<li id="name-container" class="even" py:with="error = errors.get('name', None)">
-							<div py:if="error" class="form-error">${error}</div>
-							<div id="name-label" class="form-label">
-								<label for="name">Name</label>
-							</div>
-							<div class="form-field">
-								<input type="text" name="name" class="textfield required" id="name" value="${values.get('name', None)}" />
-							</div>
-						</li>
-						<li id="email-container" class="odd" py:with="error = errors.get('email', None)">
-							<div py:if="error" class="form-error">${error}</div>
-							<div id="email-label" class="form-label">
-								<label for="email">Email Address (will never be published)</label>
-							</div>
-							<div class="form-field">
-								<input type="text" name="email" class="textfield" id="email" value="${values.get('email', None)}" maxlength="255" />
-							</div>
-						</li>
-						<li id="body-container" class="even" py:with="error = errors.get('body', None)">
-							<div py:if="error" class="form-error">${error}</div>
-							<div id="body-label" class="form-label">
-								<!--! XXX: This may not be a safe assumption for all languages... but for some reason 'Comment' alone doesn't translate here. -->
-								<label for="body">${ungettext('Comment', 'Comments', 1)}</label>
-							</div>
-							<div class="form-field">
-								<textarea id="body" name="body" class="required textarea" rows="5" cols="25">${values.get('body', None)}</textarea>
-							</div>
-						</li>
-						<li id="submit-container" class="odd submit">
-							<div class="form-field">
-								<button type="submit" class="mcore-btn btn-post-comment f-rgt"><span>Submit Comment</span></button>
-							</div>
-						</li>
-					</ul>
-				</form>
-			</py:if>
 		</div>
+		${add_comment(action, values)}
 	</py:def>
 
 	<py:if test="value_of('comment_to_render', None)">

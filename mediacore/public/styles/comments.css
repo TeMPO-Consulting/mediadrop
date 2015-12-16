@@ -69,31 +69,37 @@
 .comment blockquote p {
 	margin-top: 10px;
 }
+.comment-response {
+   float: right;
+   cursor: pointer;
+   color: #0f7cb4;
+   font-bold: bold;
+}
 
 /* Post comment form */
-#post-comment-form textarea,
-#post-comment-form input[type='text'] {
+.post-comment-form textarea,
+.post-comment-form input[type='text'] {
 	width: 544px;
 	font-size: 13px;
 }
-#post-comment-form .form-field-wide textarea,
-#post-comment-form .form-field-wide input[type='text'] {
+.post-comment-form .form-field-wide textarea,
+.post-comment-form .form-field-wide input[type='text'] {
 	margin-bottom: 12px;
 }
-#post-comment-form .form-field-wide label {
+.post-comment-form .form-field-wide label {
 	/* style for rearranged OverText labels */
 	padding: 6px 9px;
 	cursor: text;
 	position: absolute;
 	display: none;
 }
-#post-comment-form li .form-label {
+.post-comment-form li .form-label {
 	margin: 5px 0;
 }
-#post-comment-form li .form-field {
+.post-comment-form li .form-field {
 	margin: 5px 0;
 }
-#post-comment-form li .field-error {
+.post-comment-form li .field-error {
 	width: 398px;
 	padding: 3px;
 	margin: -3px 5px 5px 0;
@@ -112,3 +118,4 @@
 #comment-flash .error {
 	background-image: url('../images/uploader/ex.png');
 }
+
