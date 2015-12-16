@@ -210,6 +210,20 @@ a:hover {
 .mcore-nav-link:active > span,
 .mcore-nav-link.active > span { background-position: 0 -76px }
 
+.mcore-nav-link-btns {
+  width: 5px;
+  background-position: -5px 0;
+ }
+.mcore-nav-link-btns:hover { background-position: -5px -0px }
+.mcore-nav-link-btns:active,
+.mcore-nav-link-btns.active { background-position: -5px -0px }
+.mcore-nav-link-btns:hover > em { background-position: 0 -0px }
+.mcore-nav-link-btns:active > em,
+.mcore-nav-link-btns.active > em { background-position: 0 -0px }
+.mcore-nav-link-btns:hover > span { background-position: 0 -0px }
+.mcore-nav-link-btns:active > span,
+.mcore-nav-link-btns.active > span { background-position: 0 -0px }
+
 #nav-search {
 	float: right;
 	width: 175px;

@@ -162,15 +162,19 @@ mcore.players.Controller.prototype.decorateInternal = function(element) {
   this.likeLi_ = this.dom_.getElementsByClass('mcore-like-li', bar)[0];
   this.dislikeLi_ = this.dom_.getElementsByClass('mcore-dislike-li', bar)[0];
 
+  var lc = new goog.storage.mechanism.HTML5LocalStorage();
+  var slug = document.querySelector('meta[property="og:slug"]').content;
+
   // Remove the like and dislikes buttons
-  this.likeLi_.style.visibility = 'hidden';
-  this.dislikeLi_.style.visibility = 'hidden';
-  var rep_li = this.dom_.createDom('li', 'mcore-nav-left');
-  var rep_span = this.dom_.createDom('span', 'mcore-nav-link');
-  var rep_span_link = this.dom_.createDom('span');
-  this.dom_.insertSiblingBefore(rep_li, this.likeLi_);
-  this.dom_.insertChildAt(rep_li, rep_span, 0);
-  this.dom_.insertChildAt(rep_span, rep_span_link, 0);
+  if (lc.get("axitube_comment_" + slug) != "true" || lc.get("axitube_like_" + slug) == "true") {
+    if (this.likeLi_ != null) {
+      this.likeLi_.style.visibility = 'hidden';
+    }
+
+    if (this.dislikeLi_ != null) {
+      this.dislikeLi_.style.visibility = 'hidden';
+    }
+  }
 
   this.addChild(this.player_, /* opt_render */ false);
   this.player_.decorate(box);
