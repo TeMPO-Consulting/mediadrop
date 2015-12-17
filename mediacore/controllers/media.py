@@ -337,7 +337,7 @@ class MediaController(BaseController):
             c.comment_id = comment_id
             parent_comment = fetch_row(Comment, id=comment_id)
             if parent_comment:
-                c.level = parent_comment.level + 1
+                c.level = parent_comment.level < 3 and parent_comment.level + 1 or 3
             else:
                 c.level = 0
         else:

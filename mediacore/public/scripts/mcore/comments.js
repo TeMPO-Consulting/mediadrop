@@ -105,7 +105,11 @@ mcore.comments.CommentForm.prototype.decorateInternal = function(formElement) {
   if (this.comment_id != null && this.comment_id != "") {
     this.toggleButton = this.dom_.getElementsByClass('comment-response-' + this.comment_id)[0];
     this.form = formElement;
-  };
+  }
+  else {
+    this.toggleButton = this.dom_.getElementsByClass('comment-form-title')[0];
+    this.form = this.dom_.getElementsByTagNameAndClass('ul', 'field-list', formElement)[0];
+  }
 };
 
 
@@ -117,10 +121,10 @@ mcore.comments.CommentForm.prototype.enterDocument = function() {
   this.getHandler().listen(this.getElement(),
       goog.events.EventType.SUBMIT,
       this.handleSubmit);
-  if (this.comment_id != null && this.comment_id != "") {
-    this.getHandler().listen(this.toggleButton, goog.events.EventType.CLICK,
-        this.onToggleClick_);
-  }
+  //if (this.comment_id != null && this.comment_id != "") {
+  this.getHandler().listen(this.toggleButton, goog.events.EventType.CLICK,
+      this.onToggleClick_);
+  //}
 };
 
 /**
@@ -140,7 +144,13 @@ mcore.comments.CommentForm.prototype.exitDocument = function() {
  */
 mcore.comments.CommentForm.prototype.showForm = function(show) {
   this.form.style.display = show ? 'block' : 'none';
-  this.toggleButton.innerHTML = show ? '&laquo; Répondre' : 'Répondre &raquo;';
+  if (this.comment_id != null && this.comment_id != '') {
+    this.toggleButton.innerHTML = show ? '&laquo; Répondre' : 'Répondre &raquo;';
+  }
+  else {
+    var iconUpdate = this.dom_.getElementsByClass('open-comment-form', this.toggleButton)[0];
+    iconUpdate.innerHTML = show ? '&uArr;' : '&dArr;';
+  }
   //this.injectToggle(show ? this : null);
   //this.toggleButton.innerHTML = show ? '&raquo;' : '&laquo;';
   this.isFormShown = show;

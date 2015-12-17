@@ -92,6 +92,10 @@
 	width: 544px;
 	font-size: 13px;
 }
+.post-comment-form.level1 textarea,
+.post-comment-form.level1 input[type='text']{
+    width: 524px;
+}
 .post-comment-form .form-field-wide textarea,
 .post-comment-form .form-field-wide input[type='text'] {
 	margin-bottom: 12px;
@@ -114,6 +118,19 @@
 	padding: 3px;
 	margin: -3px 5px 5px 0;
 	color: red;
+}
+.post-comment-form.level1 li .field-error {
+    width: 378px;
+}
+
+.comment-form-title {
+   cursor: pointer;
+}
+
+.open-comment-form {
+   cursor: pointer;
+   color: #0f7cb4;
+   font-bold: bold;
 }
 
 #comment-flash {

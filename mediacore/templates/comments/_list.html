@@ -19,15 +19,16 @@ See LICENSE.txt in the main project directory, for more information.
 		</head>
 	</py:match>
 
-	<py:def function="add_comment(action=None, values=None, comment_id='')">
+	<py:def function="add_comment(action=None, values=None, comment_id='', comment_level=0)">
 	    <py:if test="action">
-		    <form id="post-comment-form/${comment_id}" action="${action}" method="post" class="post-comment-form required form" style="display: ${comment_id and 'none' or 'block'}">
+		    <form id="post-comment-form/${comment_id}" action="${action}" method="post" class="post-comment-form required form level${comment_level}" style="display: ${comment_id and 'none' or 'block'}">
 				<br />
-				<h3>Write a comment</h3>
+				<h3 py:if="not comment_id" class="comment-form-title">Write a comment<span class="open-comment-form">&dArr;</span></h3>
+				<h3 py:if="comment_id">Votre réponse</h3>
 				<ul class="field-list" py:with="
 					values = values or {};
 					errors = tmpl_context.form_errors or {};
-				">
+				" style="display: ${comment_id and 'block' or 'none'}">
 					<li id="comment-id-container" class="odd" py:with="error = errors.get('comment-id', None)" hidden="True">
 						<div id="name-label" class="form-label">
 							<label for="comment_id">Comment</label>
@@ -90,7 +91,7 @@ See LICENSE.txt in the main project directory, for more information.
 				<span class="comment-response comment-response-${comment.id}">Répondre &raquo;</span>
 			</div>
 			<div class="comment-bottom level${comment.level}" />
-			${add_comment(action, values, comment.id, False)}
+			${add_comment(action, values, comment.id, comment.level)}
 		</li>
 	</py:def>
 
