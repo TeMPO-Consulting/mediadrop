@@ -102,7 +102,7 @@ mcore.comments.CommentForm.prototype.decorateInternal = function(formElement) {
 
   // Form hide/display
   this.comment_id = formElement.id.split("/")[1];
-  if (this.comment_id != null) {
+  if (this.comment_id != null && this.comment_id != "") {
     this.toggleButton = this.dom_.getElementsByClass('comment-response-' + this.comment_id)[0];
     this.form = formElement;
   };
@@ -117,7 +117,7 @@ mcore.comments.CommentForm.prototype.enterDocument = function() {
   this.getHandler().listen(this.getElement(),
       goog.events.EventType.SUBMIT,
       this.handleSubmit);
-  if (this.comment_id != null) {
+  if (this.comment_id != null && this.comment_id != "") {
     this.getHandler().listen(this.toggleButton, goog.events.EventType.CLICK,
         this.onToggleClick_);
   }
@@ -128,7 +128,7 @@ mcore.comments.CommentForm.prototype.enterDocument = function() {
  */
 mcore.comments.CommentForm.prototype.exitDocument = function() {
   goog.base(this, 'exitDocument');
-  if (this.comment_id != null) {
+  if (this.comment_id != null && this.comment_id != "") {
     this.getHandler().unlisten(this.toggleButton, goog.events.EventType.CLICK,
         this.onToggleClick_);
   }
@@ -247,8 +247,22 @@ mcore.comments.CommentForm.prototype.setFormEnabled = function(enable) {
   this.fade_ = new goog.fx.dom.Fade(this.getElement(), opacityNow,
       opacityAfter, 100);
   this.fade_.play();
+  if (this.comment_id != null && this.comment_id != "") {
+    this.showForm(false);
+  }
 };
 
+
+function index(el) {
+    var children = el.parentNode.childNodes,
+        i = 0;
+    for (; i < children.length; i++) {
+        if (children[i] == el) {
+            return i;
+        }
+    }
+    return -1;
+}
 
 /**
  * Take the element and inject it into the first .comment-list on the page.
@@ -266,7 +280,21 @@ mcore.comments.CommentForm.prototype.injectComment = function(element) {
     this.dom_.setTextContent(counter, String(count));
   }
   var list = this.dom_.getElement('comments-list');
-  this.dom_.appendChild(list, element);
+  if (this.comment_id != null && this.comment_id != "") {
+    var parent_comment = this.dom_.getElement('comment-li-' + this.comment_id);
+    var index_pc = index(parent_comment);
+    if (index_pc != -1) {
+      this.dom_.insertChildAt(list, element, index_pc+1);
+    }
+    else {
+      this.dom_.appendChild(list, element);
+    }
+
+  }
+  else {
+    this.dom_.appendChild(list, element);
+  }
+
   var slide = new mcore.fx.SlideIntoView(element, 250);
   slide.play();
 };
@@ -278,6 +306,7 @@ mcore.comments.CommentForm.prototype.injectComment = function(element) {
  */
 mcore.comments.CommentForm.prototype.displayUserErrors = function(errors) {
   var form = this.getElement();
+  console.log(errors);
   for (var name in errors) {
     var field = form.elements[name];
     var errorDiv = this.dom_.createDom('div', 'field-error', errors[name]);

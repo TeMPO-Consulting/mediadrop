@@ -156,5 +156,19 @@ a.mcore-btn.mcore-btn-grey:visited {
 .comment-content { background: url('../images/ui-kit/${navbar_color}/comment-bg.png') repeat-y }
 .comment-bottom { background: url('../images/ui-kit/${navbar_color}/comment-bottom.png') no-repeat }
 
+.comment-top { background: url('../images/ui-kit/${navbar_color}/comment-top-1.png') no-repeat bottom }
+.comment-top-divot.level1 { background: url('../images/ui-kit/${navbar_color}/comment-top-divot-1.png') no-repeat bottom }
+.comment-content.level1 { background: url('../images/ui-kit/${navbar_color}/comment-bg-1.png') repeat-y }
+.comment-bottom.level1 { background: url('../images/ui-kit/${navbar_color}/comment-bottom-1.png') no-repeat }
+
+.comment-top.level2 { background: url('../images/ui-kit/${navbar_color}/comment-top-2.png') no-repeat bottom }
+.comment-top-divot.level2 { background: url('../images/ui-kit/${navbar_color}/comment-top-divot-2.png') no-repeat bottom }
+.comment-content.level2 { background: url('../images/ui-kit/${navbar_color}/comment-bg-2.png') repeat-y }
+.comment-bottom.level2 { background: url('../images/ui-kit/${navbar_color}/comment-bottom-2.png') no-repeat }
+
+.comment-top.level3 { background: url('../images/ui-kit/${navbar_color}/comment-top-3.png') no-repeat bottom }
+.comment-top-divot.level3 { background: url('../images/ui-kit/${navbar_color}/comment-top-divot-3.png') no-repeat bottom }
+.comment-content.level3 { background: url('../images/ui-kit/${navbar_color}/comment-bg-3.png') repeat-y }
+.comment-bottom.level3 { background: url('../images/ui-kit/${navbar_color}/comment-bottom-3.png') no-repeat }
 
 ${appearance_custom_css}

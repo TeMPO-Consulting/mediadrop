@@ -29,12 +29,11 @@ See LICENSE.txt in the main project directory, for more information.
 					errors = tmpl_context.form_errors or {};
 				">
 					<li id="comment-id-container" class="odd" py:with="error = errors.get('comment-id', None)" hidden="True">
-						<div py:if="error" class="form-error">${error}</div>
 						<div id="name-label" class="form-label">
-							<label for="comment-id">Comment</label>
+							<label for="comment_id">Comment</label>
 						</div>
 						<div class="form-field">
-							<input type="text" name="comment-id" class="textfield readonly" id="comment-id" value="${comment_id}" />
+							<input type="text" name="comment_id" class="textfield readonly" id="comment_id" value="${comment_id}" />
 						</div>
 					</li>
 					<li id="name-container" class="even" py:with="error = errors.get('name', None)">
@@ -75,10 +74,10 @@ See LICENSE.txt in the main project directory, for more information.
 	    </py:if>
     </py:def>
 
-	<py:def function="comment_li(comment)">
-		<li class="comment">
-			<div class="comment-top-divot"></div>
-			<div class="comment-content clearfix">
+	<py:def function="comment_li(comment, action=None, values=None)">
+		<li class="${comment.comment_id and 'subcomment'} comment" id="comment-li-${comment.id}">
+			<div class="comment-top-divot level${comment.level}"></div>
+			<div class="comment-content clearfix level${comment.level}">
 				<span class="avatar"><img src="${h.gravatar_from_email(comment.author.email, 70)}" width="70" height="70" alt="" /></span>
 				<cite>
 					<a href="#comment-${comment.id}" name="comment-${comment.id}" class="underline-hover" title="Permalink"
@@ -90,7 +89,7 @@ See LICENSE.txt in the main project directory, for more information.
 				<blockquote py:content="Markup(comment.body)" />
 				<span class="comment-response comment-response-${comment.id}">Répondre &raquo;</span>
 			</div>
-			<div class="comment-bottom" />
+			<div class="comment-bottom level${comment.level}" />
 			${add_comment(action, values, comment.id, False)}
 		</li>
 	</py:def>
@@ -104,7 +103,7 @@ See LICENSE.txt in the main project directory, for more information.
 				<div class="comment-bottom" />
 			</div>
 			<ul class="comments-list" id="comments-list">
-				<py:for each="comment in comments">${comment_li(comment)}</py:for>
+				<py:for each="comment in comments">${comment_li(comment, action, values)}</py:for>
 			</ul>
 			<div id="comment-flash" class="no-comments" style="display:none">
 				<div class="comment-top" />
@@ -115,7 +114,11 @@ See LICENSE.txt in the main project directory, for more information.
 		${add_comment(action, values)}
 	</py:def>
 
-	<py:if test="value_of('comment_to_render', None)">
+	<py:if test="value_of('comment_to_render', None) and value_of('comment_action', None)">
+		${comment_li(comment_to_render, action=comment_action)}
+	</py:if>
+
+	<py:if test="value_of('comment_to_render', None) and not value_of('comment_action', None)">
 		${comment_li(comment_to_render)}
 	</py:if>
 

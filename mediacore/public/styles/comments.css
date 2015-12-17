@@ -76,6 +76,16 @@
    font-bold: bold;
 }
 
+.comment.subcomment {
+   margin-left: 20px;
+   width: 540px;
+}
+
+.comment.subcomment cite,
+.comment.subcomment blockquote {
+	width: 413px;
+}
+
 /* Post comment form */
 .post-comment-form textarea,
 .post-comment-form input[type='text'] {
