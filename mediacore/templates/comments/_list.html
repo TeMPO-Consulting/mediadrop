@@ -76,7 +76,7 @@ See LICENSE.txt in the main project directory, for more information.
     </py:def>
 
 	<py:def function="comment_li(comment, action=None, values=None)">
-		<li class="${comment.comment_id and 'subcomment'} comment" id="comment-li-${comment.id}">
+		<li class="${comment.comment_id and 'subcomment subcomment-%s' % comment.comment_id} level${comment.level} comment" id="comment-li-${comment.id}">
 			<div class="comment-top-divot level${comment.level}"></div>
 			<div class="comment-content clearfix level${comment.level}">
 				<span class="avatar"><img src="${h.gravatar_from_email(comment.author.email, 70)}" width="70" height="70" alt="" /></span>

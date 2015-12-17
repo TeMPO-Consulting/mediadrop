@@ -17,7 +17,8 @@ Comments come with two status flags:
 from datetime import datetime
 from sqlalchemy import Table, ForeignKey, Column, sql
 from sqlalchemy.types import BigInteger, Boolean, DateTime, Integer, Unicode, UnicodeText
-from sqlalchemy.orm import mapper, relation, backref, synonym, composite, column_property, validates, interfaces, Query
+from sqlalchemy.orm import mapper, relation, backref, synonym, composite, column_property, validates, interfaces, \
+    Query, dynamic_loader
 
 from mediacore.model import AuthorWithIP
 from mediacore.model.meta import DBSession, metadata
@@ -56,6 +57,9 @@ class CommentQuery(Query):
             return self.filter(filter)
         else:
             return self.filter(sql.not_(filter))
+
+    def subcomment(self, comment_id=None):
+        return self.published().filter(Comment.comment_id == comment_id)
 
     def search(self, q):
         q = '%' + q + '%'
@@ -111,4 +115,12 @@ mapper(Comment, comments, order_by=comments.c.created_on, extension=events.Mappe
         comments.c.author_name,
         comments.c.author_email,
         comments.c.author_ip),
+    'comments': dynamic_loader(
+            Comment,
+        #    backref='comment',
+            query_class=CommentQuery,
+            passive_deletes=True,
+            doc="""A query pre-filtered for associated comments.
+                   Returns :class:`mediacore.model.comments.CommentQuery`."""
+        ),
 })

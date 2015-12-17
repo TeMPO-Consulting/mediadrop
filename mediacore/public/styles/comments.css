@@ -75,15 +75,34 @@
    color: #0f7cb4;
    font-bold: bold;
 }
-
-.comment.subcomment {
+.comment.subcomment.level1 {
    margin-left: 20px;
    width: 540px;
 }
 
-.comment.subcomment cite,
-.comment.subcomment blockquote {
+.comment.subcomment.level1 cite,
+.comment.subcomment.level1 blockquote {
 	width: 413px;
+}
+
+.comment.subcomment.level2 {
+   margin-left: 40px;
+   width: 520px;
+}
+
+.comment.subcomment.level2 cite,
+.comment.subcomment.level2 blockquote {
+	width: 393px;
+}
+
+.comment.subcomment.level3 {
+   margin-left: 60px;
+   width: 500px;
+}
+
+.comment.subcomment.level3 cite,
+.comment.subcomment.level3 blockquote {
+	width: 373px;
 }
 
 /* Post comment form */
@@ -95,6 +114,14 @@
 .post-comment-form.level1 textarea,
 .post-comment-form.level1 input[type='text']{
     width: 524px;
+}
+.post-comment-form.level2 textarea,
+.post-comment-form.level2 input[type='text']{
+    width: 504px;
+}
+.post-comment-form.level3 textarea,
+.post-comment-form.level3 input[type='text']{
+    width: 484px;
 }
 .post-comment-form .form-field-wide textarea,
 .post-comment-form .form-field-wide input[type='text'] {

@@ -228,10 +228,23 @@ class MediaController(BaseController):
         related_media = viewable_media(Media.query.related(media))[:6]
         # TODO: finish implementation of different 'likes' buttons
         #       e.g. the default one, plus a setting to use facebook.
+
+        l0_comments = media.comments.published().filter(Comment.level==0)
+        displayed_comments = []
+
+        def sort_comments(comment):
+            displayed_comments.append(comment)
+            for sc in comment.comments.subcomment(comment.id):
+                sort_comments(sc)
+
+        for l0 in l0_comments:
+            sort_comments(l0)
+
         return dict(
             media = media,
             related_media = related_media,
-            comments = media.comments.published().all(),
+#            comments = media.comments.published().filter(Comment.level==0),
+            comments = displayed_comments,
             comment_form_action = url_for(action='comment'),
             comment_form_values = kwargs,
             quality = quality,

@@ -156,7 +156,7 @@ a.mcore-btn.mcore-btn-grey:visited {
 .comment-content { background: url('../images/ui-kit/${navbar_color}/comment-bg.png') repeat-y }
 .comment-bottom { background: url('../images/ui-kit/${navbar_color}/comment-bottom.png') no-repeat }
 
-.comment-top { background: url('../images/ui-kit/${navbar_color}/comment-top-1.png') no-repeat bottom }
+.comment-top.level1 { background: url('../images/ui-kit/${navbar_color}/comment-top-1.png') no-repeat bottom }
 .comment-top-divot.level1 { background: url('../images/ui-kit/${navbar_color}/comment-top-divot-1.png') no-repeat bottom }
 .comment-content.level1 { background: url('../images/ui-kit/${navbar_color}/comment-bg-1.png') repeat-y }
 .comment-bottom.level1 { background: url('../images/ui-kit/${navbar_color}/comment-bottom-1.png') no-repeat }

@@ -263,15 +263,25 @@ mcore.comments.CommentForm.prototype.setFormEnabled = function(enable) {
 };
 
 
-function index(el) {
-    var children = el.parentNode.childNodes,
-        i = 0;
-    for (; i < children.length; i++) {
-        if (children[i] == el) {
+function index(el, list) {
+    var i = 0;
+    for (; i < list.length; i++) {
+        if (list[i] == el) {
             return i;
         }
     }
     return -1;
+}
+
+function get_level(el) {
+  var level = undefined;
+  var i = 0;
+  for (i = 0; i < el.className.split(" ").length; i++) {
+      if (el.className.split(" ")[i].startsWith("level")) {
+          level = el.className.split(" ")[i].substring(5,6);
+      }
+  }
+  return level;
 }
 
 /**
@@ -292,9 +302,32 @@ mcore.comments.CommentForm.prototype.injectComment = function(element) {
   var list = this.dom_.getElement('comments-list');
   if (this.comment_id != null && this.comment_id != "") {
     var parent_comment = this.dom_.getElement('comment-li-' + this.comment_id);
-    var index_pc = index(parent_comment);
+    var com_list = this.dom_.getElementsByClass('comment');
+    var level = get_level(parent_comment);
+    var index_pc = index(parent_comment, com_list);
+
+    // Put the comment at the right place (before the next comment of parent level)
     if (index_pc != -1) {
-      this.dom_.insertChildAt(list, element, index_pc+1);
+        var before_com = undefined;
+        var i = index_pc + 1;
+        for (; i < com_list.length; i++) {
+            console.log(com_list[i], get_level(com_list[i]), level, i);
+            if ((level == 3 && get_level(com_list[i]) < level) || get_level(com_list[i]) <= level)  {
+                before_com = com_list[i];
+                break;
+            }
+        }
+        if (before_com != undefined) {
+            console.log('before');
+            this.dom_.insertSiblingBefore(element, before_com);
+        }
+        else if (level != 0) {
+            console.log('after');
+            this.dom_.insertSiblingAfter(element, parent_comment);
+        }
+        else {
+            this.dom_.appendChild(list, element);
+        }
     }
     else {
       this.dom_.appendChild(list, element);
@@ -307,6 +340,7 @@ mcore.comments.CommentForm.prototype.injectComment = function(element) {
 
   var slide = new mcore.fx.SlideIntoView(element, 250);
   slide.play();
+
 };
 
 
@@ -316,7 +350,6 @@ mcore.comments.CommentForm.prototype.injectComment = function(element) {
  */
 mcore.comments.CommentForm.prototype.displayUserErrors = function(errors) {
   var form = this.getElement();
-  console.log(errors);
   for (var name in errors) {
     var field = form.elements[name];
     var errorDiv = this.dom_.createDom('div', 'field-error', errors[name]);
