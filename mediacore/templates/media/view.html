@@ -27,7 +27,8 @@ See LICENSE.txt in the main project directory, for more information.
 	<meta property="og:url" content="${h.url_for_media(media, qualified=True)}"/>
 	<meta property="og:description" content="${h.meta_description(media=media)}"/>
 	<meta property="og:site_name" content="${h.page_title()}"/>
-	<meta property="og:image" content="${h.thumb_url(media, 'l', qualified=True)}"/>
+    <meta property="og:image" content="${h.thumb_url(media, 'l', qualified=True)}"/>
+    <meta property="og:slug" content="${media.slug}" />
 
 	<link rel="image_src" href="${h.thumb_url(media, 'l', qualified=True)}" />
 </head>
@@ -59,7 +60,7 @@ See LICENSE.txt in the main project directory, for more information.
 				<div class="mcore-excerpt" style="display:none" py:if="excerpt != fulltext"><p py:replace="Markup(excerpt)" /></div>
 			</div>
 			<div class="feat-stats clearfix">
-				<div class="meta-views f-rgt">${h.format_decimal(media.views)} ${ungettext('View', 'Views', media.views)}</div>
+				<div id="media_views" class="meta-views f-rgt">${h.format_decimal(media.views)} ${ungettext('Vue', 'Vues', media.views)}</div>
 				<div py:if="settings.get('likes') != 'facebook' and (settings['appearance_show_like'] or settings['appearance_show_dislike'])" class="meta-likes f-rgt">
 					<span py:if="settings['appearance_show_like']" id="mcore-likes-counter">${h.format_decimal(media.likes)}</span> ${ungettext('Like', 'Likes', media.likes)}
 					<span py:if="settings['appearance_show_dislike']" class="meta-dislikes"><span id="mcore-dislikes-counter">${h.format_decimal(media.dislikes)}</span> ${ungettext('Dislike', 'Dislikes', media.dislikes)}</span>
@@ -131,6 +132,7 @@ See LICENSE.txt in the main project directory, for more information.
 		</div>
 	</div>
 
-	</div>
+</div>
+ <script type="text/javascript" src="${h.url_for('/scripts/mcore/view_increment.js')}"></script>
 </body>
 </html>
