@@ -233,10 +233,23 @@ class MediaController(BaseController):
         related_media = viewable_media(Media.query.related(media))[:6]
         # TODO: finish implementation of different 'likes' buttons
         #       e.g. the default one, plus a setting to use facebook.
+
+        l0_comments = media.comments.published().filter(Comment.level==0)
+        displayed_comments = []
+
+        def sort_comments(comment):
+            displayed_comments.append(comment)
+            for sc in comment.comments.subcomment(comment.id):
+                sort_comments(sc)
+
+        for l0 in l0_comments:
+            sort_comments(l0)
+
         return dict(
             media = media,
             related_media = related_media,
-            comments = media.comments.published().all(),
+#            comments = media.comments.published().filter(Comment.level==0),
+            comments = displayed_comments,
             comment_form_action = url_for(action='comment'),
             comment_form_values = kwargs,
             quality = quality,
@@ -288,7 +301,7 @@ class MediaController(BaseController):
     @validate_xhr(comment_schema, error_handler=view)
     @autocommit
     @observable(events.MediaController.comment)
-    def comment(self, slug, name='', email=None, body='', **kwargs):
+    def comment(self, slug, name='', email=None, body='', comment_id=None, **kwargs):
         """Post a comment from :class:`~mediacore.forms.comments.PostCommentForm`.
 
         :param slug: The media :attr:`~mediacore.model.media.Media.slug`
@@ -300,15 +313,17 @@ class MediaController(BaseController):
                 result = dict(success=success, message=message)
                 if comment:
                     result['comment'] = render('comments/_list.html',
-                        {'comment_to_render': comment},
+                        {
+                            'comment_to_render': comment,
+                            'comment_action': '/media/%s/comment' % slug,
+                         },
                         method='xhtml')
                 return result
             elif success:
                 return redirect(action='view')
             else:
-                return self.view(slug, name=name, email=email, body=body,
+                return self.view(slug, name=name, email=email, body=body, comment_id=comment_id,
                                  **kwargs)
-
         if request.settings['comments_engine'] != 'mediacore':
             abort(404)
         akismet_key = request.settings['akismet_key']
@@ -336,6 +351,15 @@ class MediaController(BaseController):
         c.author = AuthorWithIP(name, email, request.environ['REMOTE_ADDR'])
         c.subject = 'Re: %s' % media.title
         c.body = filter_vulgarity(body)
+        if comment_id:
+            c.comment_id = comment_id
+            parent_comment = fetch_row(Comment, id=comment_id)
+            if parent_comment:
+                c.level = parent_comment.level < 3 and parent_comment.level + 1 or 3
+            else:
+                c.level = 0
+        else:
+            c.level = 0
 
         require_review = request.settings['req_comment_approval']
         if not require_review:

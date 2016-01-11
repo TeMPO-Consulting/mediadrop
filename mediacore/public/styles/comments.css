@@ -69,35 +69,95 @@
 .comment blockquote p {
 	margin-top: 10px;
 }
+.comment-response {
+   float: right;
+   cursor: pointer;
+   color: #0f7cb4;
+   font-bold: bold;
+}
+.comment.subcomment.level1 {
+   margin-left: 20px;
+   width: 540px;
+}
+
+.comment.subcomment.level1 cite,
+.comment.subcomment.level1 blockquote {
+	width: 413px;
+}
+
+.comment.subcomment.level2 {
+   margin-left: 40px;
+   width: 520px;
+}
+
+.comment.subcomment.level2 cite,
+.comment.subcomment.level2 blockquote {
+	width: 393px;
+}
+
+.comment.subcomment.level3 {
+   margin-left: 60px;
+   width: 500px;
+}
+
+.comment.subcomment.level3 cite,
+.comment.subcomment.level3 blockquote {
+	width: 373px;
+}
 
 /* Post comment form */
-#post-comment-form textarea,
-#post-comment-form input[type='text'] {
+.post-comment-form textarea,
+.post-comment-form input[type='text'] {
 	width: 544px;
 	font-size: 13px;
 }
-#post-comment-form .form-field-wide textarea,
-#post-comment-form .form-field-wide input[type='text'] {
+.post-comment-form.level1 textarea,
+.post-comment-form.level1 input[type='text']{
+    width: 524px;
+}
+.post-comment-form.level2 textarea,
+.post-comment-form.level2 input[type='text']{
+    width: 504px;
+}
+.post-comment-form.level3 textarea,
+.post-comment-form.level3 input[type='text']{
+    width: 484px;
+}
+.post-comment-form .form-field-wide textarea,
+.post-comment-form .form-field-wide input[type='text'] {
 	margin-bottom: 12px;
 }
-#post-comment-form .form-field-wide label {
+.post-comment-form .form-field-wide label {
 	/* style for rearranged OverText labels */
 	padding: 6px 9px;
 	cursor: text;
 	position: absolute;
 	display: none;
 }
-#post-comment-form li .form-label {
+.post-comment-form li .form-label {
 	margin: 5px 0;
 }
-#post-comment-form li .form-field {
+.post-comment-form li .form-field {
 	margin: 5px 0;
 }
-#post-comment-form li .field-error {
+.post-comment-form li .field-error {
 	width: 398px;
 	padding: 3px;
 	margin: -3px 5px 5px 0;
 	color: red;
+}
+.post-comment-form.level1 li .field-error {
+    width: 378px;
+}
+
+.comment-form-title {
+   cursor: pointer;
+}
+
+.open-comment-form {
+   cursor: pointer;
+   color: #0f7cb4;
+   font-bold: bold;
 }
 
 #comment-flash {
@@ -112,3 +172,4 @@
 #comment-flash .error {
 	background-image: url('../images/uploader/ex.png');
 }
+
