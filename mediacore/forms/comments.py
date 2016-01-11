@@ -15,3 +15,4 @@ class PostCommentSchema(Schema):
         messages={'empty': N_('Please enter your name!')})
     email = email_validator()
     body = XHTMLValidator(not_empty=True)
+    comment_id = TextField.validator(maxlength=500)

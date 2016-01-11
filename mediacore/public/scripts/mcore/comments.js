@@ -39,6 +39,36 @@ goog.require('mcore.net.FormXhrIo');
  */
 mcore.comments.CommentForm = function(opt_domHelper) {
   goog.base(this, opt_domHelper);
+  /**
+   * Flag to indicate whether the comment form is shown.
+   * @type {!boolean}
+   */
+  this.isFormShown = false;
+
+  /**
+   * A separate element which contains the form.
+   * @type {Element}
+   */
+  this.form = null;
+
+  /**
+   * The ID of the initial comment
+   * @type {str}
+   */
+  this.comment_id = null;
+
+  /**
+   * A rendered element which triggers a show/hide.
+   * @type {Element}
+   */
+  this.toggleButton = null;
+
+  /**
+   * A lazy-loaded animation for sliding the full text height into view.
+   * @type {goog.fx.dom.ResizeHeight}
+   * @private
+   */
+  this.anim_ = null;
 };
 goog.inherits(mcore.comments.CommentForm, goog.ui.Component);
 
@@ -70,6 +100,17 @@ mcore.comments.CommentForm.prototype.decorateInternal = function(formElement) {
       this.dom_.removeNode(labelDiv);
     }
   }, this);
+
+  // Form hide/display
+  this.comment_id = formElement.id.split("/")[1];
+  if (this.comment_id != null && this.comment_id != "") {
+    this.toggleButton = this.dom_.getElementsByClass('comment-response-' + this.comment_id)[0];
+    this.form = formElement;
+  }
+  else {
+    this.toggleButton = this.dom_.getElementsByClass('comment-form-title')[0];
+    this.form = this.dom_.getElementsByTagNameAndClass('ul', 'field-list', formElement)[0];
+  }
 };
 
 
@@ -81,8 +122,57 @@ mcore.comments.CommentForm.prototype.enterDocument = function() {
   this.getHandler().listen(this.getElement(),
       goog.events.EventType.SUBMIT,
       this.handleSubmit);
+  //if (this.comment_id != null && this.comment_id != "") {
+  this.getHandler().listen(this.toggleButton, goog.events.EventType.CLICK,
+      this.onToggleClick_);
+  //}
 };
 
+/**
+ * Remove the toggle click event.
+ */
+mcore.comments.CommentForm.prototype.exitDocument = function() {
+  goog.base(this, 'exitDocument');
+  if (this.comment_id != null && this.comment_id != "") {
+    this.getHandler().unlisten(this.toggleButton, goog.events.EventType.CLICK,
+        this.onToggleClick_);
+  }
+};
+
+/**
+ * Instantly show the comment form.
+ * @param {boolean} show True to show the form.
+ */
+mcore.comments.CommentForm.prototype.showForm = function(show) {
+  this.form.style.display = show ? 'block' : 'none';
+  if (this.comment_id != null && this.comment_id != '') {
+    this.toggleButton.innerHTML = show ? '&laquo; Répondre' : 'Répondre &raquo;';
+  }
+  else {
+    var iconUpdate = this.dom_.getElementsByClass('open-comment-form', this.toggleButton)[0];
+    iconUpdate.innerHTML = show ? '&uArr;' : '&dArr;';
+  }
+  //this.injectToggle(show ? this : null);
+  //this.toggleButton.innerHTML = show ? '&raquo;' : '&laquo;';
+  this.isFormShown = show;
+};
+
+/**
+ * Animate the toggle when the button is clicked.
+ *
+ * This function is a simple proxy that is removed by the compiler.
+ *
+ * @param {goog.events.Event} e event.
+ * @private
+ */
+mcore.comments.CommentForm.prototype.onToggleClick_ = function(e) {
+  if (this.isFormShown === true) {
+    this.showForm(false);
+  }
+  else {
+    this.showForm(true);
+  }
+};
 
 /**
  * Submit the form with XHR.
@@ -193,8 +283,32 @@ mcore.comments.CommentForm.prototype.setFormEnabled = function(enable) {
   this.fade_ = new goog.fx.dom.Fade(this.getElement(), opacityNow,
       opacityAfter, 100);
   this.fade_.play();
+  if (this.comment_id != null && this.comment_id != "") {
+    this.showForm(false);
+  }
 };
 
+
+function index(el, list) {
+    var i = 0;
+    for (; i < list.length; i++) {
+        if (list[i] == el) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+function get_level(el) {
+  var level = undefined;
+  var i = 0;
+  for (i = 0; i < el.className.split(" ").length; i++) {
+      if (el.className.split(" ")[i].startsWith("level")) {
+          level = el.className.split(" ")[i].substring(5,6);
+      }
+  }
+  return level;
+}
 
 /**
  * Take the element and inject it into the first .comment-list on the page.
@@ -212,9 +326,46 @@ mcore.comments.CommentForm.prototype.injectComment = function(element) {
     this.dom_.setTextContent(counter, String(count));
   }
   var list = this.dom_.getElement('comments-list');
-  this.dom_.appendChild(list, element);
+  if (this.comment_id != null && this.comment_id != "") {
+    var parent_comment = this.dom_.getElement('comment-li-' + this.comment_id);
+    var com_list = this.dom_.getElementsByClass('comment');
+    var resp_link = this.dom_.getElementByClass('comment-response', element);
+    resp_link.style.display = 'none';
+    var level = get_level(parent_comment);
+    var index_pc = index(parent_comment, com_list);
+
+    // Put the comment at the right place (before the next comment of parent level)
+    if (index_pc != -1) {
+        var before_com = undefined;
+        var i = index_pc + 1;
+        for (; i < com_list.length; i++) {
+            if ((level == 3 && get_level(com_list[i]) < level) || get_level(com_list[i]) <= level)  {
+                before_com = com_list[i];
+                break;
+            }
+        }
+        if (before_com != undefined) {
+            this.dom_.insertSiblingBefore(element, before_com);
+        }
+        else if (level != 0) {
+            this.dom_.insertSiblingAfter(element, parent_comment);
+        }
+        else {
+            this.dom_.appendChild(list, element);
+        }
+    }
+    else {
+      this.dom_.appendChild(list, element);
+    }
+
+  }
+  else {
+    this.dom_.appendChild(list, element);
+  }
+
   var slide = new mcore.fx.SlideIntoView(element, 250);
   slide.play();
+
 };
 
 
