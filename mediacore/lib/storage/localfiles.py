@@ -143,7 +143,7 @@ class LocalFileStorage(FileStorageEngine):
         dimensions and predefined formats.
         """
         vid_formats = [
-            ('mp4', 'h264', 'mp3'),
+            ('mp4', 'h264', 'aac'),
         ]
 
         if self._data.get('webm') == 'yes':
