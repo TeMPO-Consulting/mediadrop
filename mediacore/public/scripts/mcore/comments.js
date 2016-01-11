@@ -303,6 +303,8 @@ mcore.comments.CommentForm.prototype.injectComment = function(element) {
   if (this.comment_id != null && this.comment_id != "") {
     var parent_comment = this.dom_.getElement('comment-li-' + this.comment_id);
     var com_list = this.dom_.getElementsByClass('comment');
+    var resp_link = this.dom_.getElementByClass('comment-response', element);
+    resp_link.style.display = 'none';
     var level = get_level(parent_comment);
     var index_pc = index(parent_comment, com_list);
 
