@@ -37,10 +37,12 @@ mcore.initPage = function() {
 
   var mediaBox = goog.dom.getElement('media-box');
   if (mediaBox) {
-    var commentForm = goog.dom.getElement('post-comment-form');
-    if (commentForm) {
-      var cf = new mcore.comments.CommentForm();
-      cf.decorate(commentForm);
+    var commentForms = goog.dom.getElementsByClass('post-comment-form');
+    if (commentForms) {
+      goog.array.forEach(commentForms, function(commentForm) {
+        var cf = new mcore.comments.CommentForm();
+        cf.decorate(commentForm);
+      }, this);
     }
 
     var excerpt = goog.dom.getElement('description-excerpt');
