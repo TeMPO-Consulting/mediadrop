@@ -311,18 +311,15 @@ mcore.comments.CommentForm.prototype.injectComment = function(element) {
         var before_com = undefined;
         var i = index_pc + 1;
         for (; i < com_list.length; i++) {
-            console.log(com_list[i], get_level(com_list[i]), level, i);
             if ((level == 3 && get_level(com_list[i]) < level) || get_level(com_list[i]) <= level)  {
                 before_com = com_list[i];
                 break;
             }
         }
         if (before_com != undefined) {
-            console.log('before');
             this.dom_.insertSiblingBefore(element, before_com);
         }
         else if (level != 0) {
-            console.log('after');
             this.dom_.insertSiblingAfter(element, parent_comment);
         }
         else {
