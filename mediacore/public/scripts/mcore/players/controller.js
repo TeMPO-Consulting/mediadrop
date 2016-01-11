@@ -159,6 +159,22 @@ mcore.players.Controller.prototype.decorateInternal = function(element) {
   this.resizerBtn_ = this.dom_.getElementsByClass('mcore-resizer', bar)[0];
   this.likeBtn_ = this.dom_.getElementsByClass('mcore-like', bar)[0];
   this.dislikeBtn_ = this.dom_.getElementsByClass('mcore-dislike', bar)[0];
+  this.likeLi_ = this.dom_.getElementsByClass('mcore-like-li', bar)[0];
+  this.dislikeLi_ = this.dom_.getElementsByClass('mcore-dislike-li', bar)[0];
+
+  var lc = new goog.storage.mechanism.HTML5LocalStorage();
+  var slug = document.querySelector('meta[property="og:slug"]').content;
+
+  // Remove the like and dislikes buttons
+  if (lc.get("axitube_comment_" + slug) != "true" || lc.get("axitube_like_" + slug) == "true") {
+    if (this.likeLi_ != null) {
+      this.likeLi_.style.visibility = 'hidden';
+    }
+
+    if (this.dislikeLi_ != null) {
+      this.dislikeLi_.style.visibility = 'hidden';
+    }
+  }
 
   this.addChild(this.player_, /* opt_render */ false);
   this.player_.decorate(box);
