@@ -18,6 +18,7 @@ goog.require('goog.style');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.LabelInput');
 goog.require('goog.storage.mechanism.HTML5LocalStorage');
+goog.require('goog.userAgent');
 goog.require('mcore.fx.SlideIntoView');
 goog.require('mcore.net.FormXhrIo');
 
@@ -303,7 +304,7 @@ function get_level(el) {
   var level = undefined;
   var i = 0;
   for (i = 0; i < el.className.split(" ").length; i++) {
-      if (el.className.split(" ")[i].startsWith("level")) {
+      if (el.className.split(" ")[i].indexOf("level") == 0) {
           level = el.className.split(" ")[i].substring(5,6);
       }
   }
@@ -330,7 +331,12 @@ mcore.comments.CommentForm.prototype.injectComment = function(element) {
     var parent_comment = this.dom_.getElement('comment-li-' + this.comment_id);
     var com_list = this.dom_.getElementsByClass('comment');
     var resp_link = this.dom_.getElementByClass('comment-response', element);
-    resp_link.style.display = 'none';
+    if (resp_link !== null) {
+        if (resp_link.getAttribute("style") == null) {
+            resp_link.setAttribute("style", "display: none");
+        }
+        resp_link.style.display = 'none';
+    }
     var level = get_level(parent_comment);
     var index_pc = index(parent_comment, com_list);
 
@@ -360,12 +366,23 @@ mcore.comments.CommentForm.prototype.injectComment = function(element) {
 
   }
   else {
+    var resp_link = this.dom_.getElementByClass('comment-response', element);
+    if (resp_link !== null) {
+        if (resp_link.getAttribute("style") == null) {
+            resp_link.setAttribute("style", "display: none");
+        }
+        resp_link.style.display = 'none';
+    }
     this.dom_.appendChild(list, element);
   }
 
-  var slide = new mcore.fx.SlideIntoView(element, 250);
-  slide.play();
-
+  if (goog.userAgent.IE === true && !goog.userAgent.isVersionOrHigher(9)) {
+    location.reload();
+  }
+  else {
+    var slide = new mcore.fx.SlideIntoView(element, 250);
+    slide.play();
+  }
 };
 
 
