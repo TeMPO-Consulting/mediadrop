@@ -19,6 +19,7 @@ See LICENSE.txt in the main project directory, for more information.
 	<title>${h.page_title(default='Explore', media='all')}</title>
 	<meta name="keywords" content="${h.meta_keywords(media='all') or 'MediaDrop'}" />
 	<meta name="description" content="${h.meta_description(media='all') or 'MediaDrop Video CMS'}" />
+	<meta property="og:slug" content="home" />
 </head>
 <body class="nav-explore-on">
 	<div class="mediacore-content clearfix">
@@ -69,7 +70,7 @@ See LICENSE.txt in the main project directory, for more information.
 			<div class="feat-box">
 				<div class="feat-top" />
 				<div class="feat-content clearfix">
-					${h.media_player(featured, width=410, height=231)}
+					${h.media_player(featured, width=410, height=231, show_like=False, show_dislike=False)}
 					<h3><a class="underline-hover" href="${h.url_for_media(featured)}">${featured.title}</a></h3>
 					<div class="feat-meta">
 						<span py:if="settings['comments_engine'] == 'mediacore'" class="meta meta-comments">${featured.comment_count_published} ${ungettext('Comment', 'Comments', featured.comment_count_published)}</span>
