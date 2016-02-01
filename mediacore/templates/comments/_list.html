@@ -30,10 +30,10 @@ See LICENSE.txt in the main project directory, for more information.
 					errors = tmpl_context.form_errors or {};
 				" style="display: ${comment_id and 'block' or 'none'}">
 					<li id="comment-id-container" class="odd" py:with="error = errors.get('comment-id', None)" hidden="True">
-						<div id="name-label" class="form-label">
+						<div id="name-label" class="form-label" style="display:none">
 							<label for="comment_id">Comment</label>
 						</div>
-						<div class="form-field">
+						<div class="form-field" style="display:none">
 							<input type="text" name="comment_id" class="textfield readonly" id="comment_id" value="${comment_id}" />
 						</div>
 					</li>
